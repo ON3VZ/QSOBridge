@@ -1,0 +1,175 @@
+{
+  "app": {
+    "tagline": "QSO log converter"
+  },
+  "top": {
+    "profile": "Profile",
+    "none": "— none —",
+    "load": "Load…",
+    "lang": "Language"
+  },
+  "tb": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "all": "All",
+    "none": "None",
+    "filtered": "Filtered",
+    "delete": "Delete",
+    "addRow": "+ Row",
+    "bulk": "Bulk…",
+    "replace": "Find/replace…",
+    "dupes": "Find dupes",
+    "next": "→ Next error",
+    "cols": "Columns…",
+    "call": "call…",
+    "band": "band",
+    "mode": "mode",
+    "missing": "missing",
+    "enrich": "Enrich (DXCC)",
+    "check": "Check"
+  },
+  "side": {
+    "health": "Health",
+    "qsos": "QSOs",
+    "selected": "Selected",
+    "missing": "Missing",
+    "invalid": "Invalid",
+    "dupes": "Dupes",
+    "files": "Files",
+    "nothing": "nothing loaded yet"
+  },
+  "status": {
+    "visible": "Visible",
+    "sel": "Sel",
+    "err": "Error",
+    "dupe": "Dupe",
+    "target": "Target",
+    "preview": "Preview",
+    "convert": "Convert & download",
+    "wizard": "Upload wizard…",
+    "fields": "Export fields…"
+  },
+  "empty": {
+    "big": "No log loaded yet",
+    "hint": "Drag a file here, paste a log, or click Load."
+  },
+  "dlg": {
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "close": "Close",
+    "done": "Done",
+    "import": "Import"
+  },
+  "wizard": {
+    "title": "Upload wizard",
+    "pick": "Where is the log going?",
+    "go": "Use this destination"
+  },
+  "restore": {
+    "found": "An unsaved session was found.",
+    "restore": "Restore",
+    "discard": "Discard"
+  },
+  "toast": {
+    "saved": "Auto-saved",
+    "downloaded": "file(s) downloaded",
+    "dupes": "dupe(s) marked",
+    "noerr": "No more errors",
+    "enriched": "fields filled",
+    "mismatch": "zone mismatch(es)"
+  },
+  "footer": {
+    "created": "Made by",
+    "disclaimer": "Use at your own risk.",
+    "local": "Everything stays local in your browser."
+  },
+  "fields": {
+    "pick": "Choose which fields go into the output file.",
+    "all": "All"
+  },
+  "help": {
+    "title": "Manual",
+    "button": "Help",
+    "sections": [
+      {
+        "id": "intro",
+        "title": "What is QSObridge?",
+        "body": "QSObridge reads your log in any common format, lets you edit and validate it, and generates a valid output file. Everything runs locally in your browser — your files never leave your device."
+      },
+      {
+        "id": "load",
+        "title": "Loading a log",
+        "body": "Drag files onto the window, click ‘Load…’, or paste a log directly (Ctrl+V). You can merge multiple files. ADIF, Cabrillo, EDI, SOTA-CSV and FLE are auto-detected; a plain CSV/XLSX opens a column mapping."
+      },
+      {
+        "id": "grid",
+        "title": "Editing in the grid",
+        "body": "Click a cell to change it; Enter or Tab moves on. Columns adapt to your data — use ‘Columns…’ to show any present field. Filter by band/mode/call, sort a column, select rows, bulk-edit or find/replace, with undo/redo (Ctrl+Z / Ctrl+Y)."
+      },
+      {
+        "id": "validate",
+        "title": "Validation",
+        "body": "Pick a profile: required or invalid fields get a red border with tooltip, and the band-plan check flags freq/band mismatches. Use ‘→ Next error’ to step through them. ‘Find dupes’ marks duplicates."
+      },
+      {
+        "id": "profiles",
+        "title": "Profiles",
+        "body": "18 contest and activation profiles are built in (POTA, WWFF, SOTA, GMA, IOTA, UBA DX, CQ WW/WPX, IARU, ARRL, VHF-EDI …). Each defines the required fields and the exchange. You can import or share a profile as JSON."
+      },
+      {
+        "id": "export",
+        "title": "Exporting",
+        "body": "Pick the target format at the bottom. ‘Export fields…’ chooses which fields to include — by default this follows your profile (POTA the park refs, IOTA serial + ref, etc.). ‘Preview’ shows the file; ‘Convert & download’ saves it. Formats without custom fields get a loss warning + sidecar."
+      },
+      {
+        "id": "wizard",
+        "title": "Upload wizard",
+        "body": "Not sure which format? Pick your destination (LoTW, eQSL, QRZ, Club Log, POTA, WWFF, SOTA, contest…) and the tool sets the right format and profile. For LoTW you get a conformant ADIF; sign it afterwards with TQSL."
+      },
+      {
+        "id": "offline",
+        "title": "Offline & saving",
+        "body": "Install QSObridge as an app (PWA) to work offline — ideal for portable. Your work is auto-saved and offered for restore after a restart; your station details are remembered."
+      },
+      {
+        "id": "disclaimer",
+        "title": "Responsibility",
+        "body": "Made by ON3VZ. Always check your output files before submission — rules and exchanges change. Use at your own risk."
+      }
+    ]
+  },
+  "data": {
+    "button": "About data",
+    "title": "About data",
+    "import": "Import cty.dat",
+    "imported": "cty.dat loaded",
+    "reflist": "Import reference list",
+    "online": "Allow online lookups (opt-in)",
+    "refkind": "Kind",
+    "refloaded": "loaded"
+  },
+  "checks": {
+    "title": "Suggestions",
+    "apply": "Apply",
+    "ignore": "Ignore",
+    "applyAll": "Apply all",
+    "none": "No suggestions found",
+    "source": "source"
+  },
+  "ai": {
+    "button": "AI assist",
+    "title": "AI assist",
+    "paste": "Paste a rough or paper log",
+    "key": "API key (BYOK, stored locally)",
+    "interpret": "Interpret",
+    "add": "Add as rows",
+    "none": "Enter an API key first",
+    "note": "Free text only. Output = suggestions (editable). The key stays local; calls go straight from your browser to the provider."
+  },
+  "views": {
+    "saved": "Views",
+    "save": "Save view",
+    "delete": "Delete view",
+    "name": "View name"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "ww-digi",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "WW Digi",
+    "fr": "WW Digi",
+    "en": "WW Digi"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": "WW-DIGI",
+  "modes": [
+    "FT8",
+    "FT4",
+    "RTTY",
+    "PSK"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "gridSquare"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "myGrid"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "myGrid"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "gridSquare"
+      ]
+    }
+  },
+  "validation": {
+    "gridSquare": {
+      "validator": "locator",
+      "required": true
+    }
+  },
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "RST + 4-karakter locator.",
+    "fr": "RST + locator 4 caractères.",
+    "en": "RST + 4-char grid locator."
+  }
+}

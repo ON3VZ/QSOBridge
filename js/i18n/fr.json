@@ -1,0 +1,175 @@
+{
+  "app": {
+    "tagline": "Convertisseur de journaux QSO"
+  },
+  "top": {
+    "profile": "Profil",
+    "none": "— aucun —",
+    "load": "Charger…",
+    "lang": "Langue"
+  },
+  "tb": {
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "all": "Tout",
+    "none": "Rien",
+    "filtered": "Filtré",
+    "delete": "Supprimer",
+    "addRow": "+ Ligne",
+    "bulk": "Groupé…",
+    "replace": "Chercher/remplacer…",
+    "dupes": "Chercher doublons",
+    "next": "→ Erreur suivante",
+    "cols": "Colonnes…",
+    "call": "indicatif…",
+    "band": "bande",
+    "mode": "mode",
+    "missing": "manquant",
+    "enrich": "Enrichir (DXCC)",
+    "check": "Vérifier"
+  },
+  "side": {
+    "health": "Santé",
+    "qsos": "QSO",
+    "selected": "Sélectionné",
+    "missing": "Manquant",
+    "invalid": "Invalide",
+    "dupes": "Doublons",
+    "files": "Fichiers",
+    "nothing": "rien de chargé"
+  },
+  "status": {
+    "visible": "Visible",
+    "sel": "Sél",
+    "err": "Erreur",
+    "dupe": "Doublon",
+    "target": "Cible",
+    "preview": "Aperçu",
+    "convert": "Convertir & télécharger",
+    "wizard": "Assistant d'envoi…",
+    "fields": "Champs export…"
+  },
+  "empty": {
+    "big": "Aucun journal chargé",
+    "hint": "Glissez un fichier ici, collez un journal, ou cliquez Charger."
+  },
+  "dlg": {
+    "cancel": "Annuler",
+    "apply": "Appliquer",
+    "close": "Fermer",
+    "done": "Terminé",
+    "import": "Importer"
+  },
+  "wizard": {
+    "title": "Assistant d'envoi",
+    "pick": "Où va le journal ?",
+    "go": "Utiliser cette destination"
+  },
+  "restore": {
+    "found": "Une session non enregistrée a été trouvée.",
+    "restore": "Restaurer",
+    "discard": "Ignorer"
+  },
+  "toast": {
+    "saved": "Enregistré",
+    "downloaded": "fichier(s) téléchargé(s)",
+    "dupes": "doublon(s) marqué(s)",
+    "noerr": "Plus d'erreurs",
+    "enriched": "champs remplis",
+    "mismatch": "écart(s) de zone"
+  },
+  "footer": {
+    "created": "Créé par",
+    "disclaimer": "Utilisation à vos propres risques.",
+    "local": "Tout reste local dans votre navigateur."
+  },
+  "fields": {
+    "pick": "Choisissez les champs du fichier de sortie.",
+    "all": "Tout"
+  },
+  "help": {
+    "title": "Manuel",
+    "button": "Aide",
+    "sections": [
+      {
+        "id": "intro",
+        "title": "Qu'est-ce que QSObridge ?",
+        "body": "QSObridge lit votre journal dans n'importe quel format courant, vous laisse l'éditer et le valider, puis génère un fichier de sortie valide. Tout se passe localement dans votre navigateur — vos fichiers ne quittent pas votre appareil."
+      },
+      {
+        "id": "load",
+        "title": "Charger un journal",
+        "body": "Glissez des fichiers sur la fenêtre, cliquez ‘Charger…’, ou collez un journal (Ctrl+V). Vous pouvez fusionner plusieurs fichiers. ADIF, Cabrillo, EDI, SOTA-CSV et FLE sont détectés ; un CSV/XLSX ouvre une correspondance de colonnes."
+      },
+      {
+        "id": "grid",
+        "title": "Édition dans la grille",
+        "body": "Cliquez dans une cellule pour modifier ; Entrée ou Tab avance. Les colonnes s'adaptent à vos données — ‘Colonnes…’ affiche tout champ présent. Filtrez par bande/mode/indicatif, triez, sélectionnez des lignes, éditez en groupe ou cherchez/remplacez, avec annuler/rétablir (Ctrl+Z / Ctrl+Y)."
+      },
+      {
+        "id": "validate",
+        "title": "Validation",
+        "body": "Choisissez un profil : les champs requis ou invalides reçoivent un bord rouge avec info-bulle, et le contrôle du plan de bande signale les incohérences fréq/bande. ‘→ Erreur suivante’ pour les parcourir. ‘Chercher doublons’ marque les doublons."
+      },
+      {
+        "id": "profiles",
+        "title": "Profils",
+        "body": "18 profils de concours et d'activation intégrés (POTA, WWFF, SOTA, GMA, IOTA, UBA DX, CQ WW/WPX, IARU, ARRL, VHF-EDI …). Chacun définit les champs requis et l'échange. Vous pouvez importer ou partager un profil en JSON."
+      },
+      {
+        "id": "export",
+        "title": "Exporter",
+        "body": "Choisissez le format cible en bas. ‘Champs export…’ choisit les champs inclus — par défaut selon votre profil (POTA les réf de parc, IOTA le numéro + réf, etc.). ‘Aperçu’ montre le fichier ; ‘Convertir & télécharger’ l'enregistre. Les formats sans champs libres reçoivent un avertissement de perte + sidecar."
+      },
+      {
+        "id": "wizard",
+        "title": "Assistant d'envoi",
+        "body": "Format incertain ? Choisissez la destination (LoTW, eQSL, QRZ, Club Log, POTA, WWFF, SOTA, concours…) et l'outil règle le bon format et profil. Pour LoTW, un ADIF conforme ; signez-le ensuite avec TQSL."
+      },
+      {
+        "id": "offline",
+        "title": "Hors-ligne & sauvegarde",
+        "body": "Installez QSObridge comme app (PWA) pour travailler hors-ligne — idéal en portable. Votre travail est sauvegardé automatiquement et proposé à la restauration après un redémarrage ; vos données station sont mémorisées."
+      },
+      {
+        "id": "disclaimer",
+        "title": "Responsabilité",
+        "body": "Créé par ON3VZ. Vérifiez toujours vos fichiers avant envoi — les règles et échanges changent. Utilisation à vos propres risques."
+      }
+    ]
+  },
+  "data": {
+    "button": "À propos des données",
+    "title": "À propos des données",
+    "import": "Importer cty.dat",
+    "imported": "cty.dat chargé",
+    "reflist": "Importer une liste de références",
+    "online": "Autoriser les recherches en ligne (opt-in)",
+    "refkind": "Type",
+    "refloaded": "chargé"
+  },
+  "checks": {
+    "title": "Suggestions",
+    "apply": "Appliquer",
+    "ignore": "Ignorer",
+    "applyAll": "Tout appliquer",
+    "none": "Aucune suggestion",
+    "source": "source"
+  },
+  "ai": {
+    "button": "Assistant IA",
+    "title": "Assistant IA",
+    "paste": "Collez un journal brut ou papier",
+    "key": "Clé API (BYOK, locale)",
+    "interpret": "Interpréter",
+    "add": "Ajouter comme lignes",
+    "none": "Entrez d'abord une clé API",
+    "note": "Texte libre uniquement. Sortie = suggestions (modifiables). La clé reste locale."
+  },
+  "views": {
+    "saved": "Vues",
+    "save": "Enregistrer la vue",
+    "delete": "Supprimer la vue",
+    "name": "Nom de la vue"
+  }
+}

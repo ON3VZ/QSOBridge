@@ -1,0 +1,28 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "pota",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "docs.pota.app", "updated": "2026-07-27" },
+  "label": { "nl": "POTA", "fr": "POTA", "en": "POTA" },
+  "targetFormat": "adif",
+  "modes": ["*"],
+  "requiredQsoFields": ["call", "datetime", "mode", "band"],
+  "header": { "required": ["stationCall", "refs.pota.mine"], "optional": ["operator"] },
+  "validation": {
+    "refs.pota.mine": { "validator": "pota", "required": true },
+    "refs.pota.worked": { "validator": "pota" }
+  },
+  "emit": {
+    "MY_SIG": "POTA",
+    "MY_SIG_INFO": "{refs.pota.mine}",
+    "MY_POTA_REF": "{refs.pota.mine}",
+    "SIG": "POTA",
+    "SIG_INFO": "{refs.pota.worked}"
+  },
+  "filenamePattern": "{stationCall}@{refs.pota.mine}-{date}.adi",
+  "notes": {
+    "nl": "ADIF. pota.app leest de legacy SIG/SIG_INFO-velden. Bestandsnaam verplicht.",
+    "fr": "ADIF. pota.app lit les champs legacy SIG/SIG_INFO. Nom de fichier obligatoire.",
+    "en": "ADIF. pota.app reads the legacy SIG/SIG_INFO fields. Filename mandatory."
+  }
+}

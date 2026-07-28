@@ -1,0 +1,175 @@
+{
+  "app": {
+    "tagline": "QSO-logconverter"
+  },
+  "top": {
+    "profile": "Profiel",
+    "none": "— geen —",
+    "load": "Laden…",
+    "lang": "Taal"
+  },
+  "tb": {
+    "undo": "Ongedaan",
+    "redo": "Opnieuw",
+    "all": "Alles",
+    "none": "Niets",
+    "filtered": "Gefilterd",
+    "delete": "Verwijder",
+    "addRow": "+ Rij",
+    "bulk": "Bulk…",
+    "replace": "Zoek/vervang…",
+    "dupes": "Dupes zoeken",
+    "next": "→ Volgende fout",
+    "cols": "Kolommen…",
+    "call": "call…",
+    "band": "band",
+    "mode": "mode",
+    "missing": "ontbrekend",
+    "enrich": "Verrijk (DXCC)",
+    "check": "Controleer"
+  },
+  "side": {
+    "health": "Gezondheid",
+    "qsos": "QSO's",
+    "selected": "Geselecteerd",
+    "missing": "Ontbrekend",
+    "invalid": "Ongeldig",
+    "dupes": "Dupes",
+    "files": "Bestanden",
+    "nothing": "nog niets geladen"
+  },
+  "status": {
+    "visible": "Zichtbaar",
+    "sel": "Sel",
+    "err": "Fout",
+    "dupe": "Dupe",
+    "target": "Doel",
+    "preview": "Voorbeeld",
+    "convert": "Converteer & download",
+    "wizard": "Uploadwizard…",
+    "fields": "Exportvelden…"
+  },
+  "empty": {
+    "big": "Nog geen log geladen",
+    "hint": "Sleep een bestand hierheen, plak een log, of klik Laden."
+  },
+  "dlg": {
+    "cancel": "Annuleer",
+    "apply": "Toepassen",
+    "close": "Sluiten",
+    "done": "Klaar",
+    "import": "Importeer"
+  },
+  "wizard": {
+    "title": "Uploadwizard",
+    "pick": "Waar gaat de log naartoe?",
+    "go": "Gebruik deze bestemming"
+  },
+  "restore": {
+    "found": "Er is een niet-opgeslagen sessie gevonden.",
+    "restore": "Herstellen",
+    "discard": "Negeren"
+  },
+  "toast": {
+    "saved": "Automatisch bewaard",
+    "downloaded": "bestand(en) gedownload",
+    "dupes": "dupe(s) gemarkeerd",
+    "noerr": "Geen fouten meer",
+    "enriched": "velden aangevuld",
+    "mismatch": "zone-afwijking(en)"
+  },
+  "footer": {
+    "created": "Gemaakt door",
+    "disclaimer": "Gebruik op eigen risico.",
+    "local": "Alles blijft lokaal in je browser."
+  },
+  "fields": {
+    "pick": "Kies welke velden in het uitvoerbestand komen.",
+    "all": "Alles"
+  },
+  "help": {
+    "title": "Handleiding",
+    "button": "Help",
+    "sections": [
+      {
+        "id": "intro",
+        "title": "Wat is QSObridge?",
+        "body": "QSObridge leest je logboek in eender welk courant formaat, laat je het bewerken en valideren, en genereert een geldig uitvoerbestand. Alles gebeurt lokaal in je browser — je bestanden verlaten je toestel niet."
+      },
+      {
+        "id": "load",
+        "title": "Log inladen",
+        "body": "Sleep bestanden op het venster, klik ‘Laden…’, of plak een log rechtstreeks (Ctrl+V). Je kunt meerdere bestanden samenvoegen. ADIF, Cabrillo, EDI, SOTA-CSV en FLE worden herkend; een gewone CSV/XLSX opent een kolom-toewijzing."
+      },
+      {
+        "id": "grid",
+        "title": "Bewerken in het raster",
+        "body": "Klik in een cel om te wijzigen; Enter of Tab springt door. De kolommen passen zich aan je data aan — via ‘Kolommen…’ toon je elk aanwezig veld. Filter op band/mode/call, sorteer op een kolom, selecteer rijen, doe bulk-bewerkingen of zoek/vervang, met undo/redo (Ctrl+Z / Ctrl+Y)."
+      },
+      {
+        "id": "validate",
+        "title": "Valideren",
+        "body": "Kies een profiel: verplichte of ongeldige velden krijgen een rode rand met tooltip, en de bandplan-check meldt freq/band-mismatch. Met ‘→ Volgende fout’ spring je er langs. ‘Dupes zoeken’ markeert dubbels."
+      },
+      {
+        "id": "profiles",
+        "title": "Profielen",
+        "body": "18 contest- en activatieprofielen zitten ingebouwd (POTA, WWFF, SOTA, GMA, IOTA, UBA DX, CQ WW/WPX, IARU, ARRL, VHF-EDI …). Elk bepaalt de verplichte velden en de exchange. Je kunt een profiel importeren of delen als JSON."
+      },
+      {
+        "id": "export",
+        "title": "Exporteren",
+        "body": "Kies onderaan het doelformaat. Met ‘Exportvelden…’ bepaal je welke velden meegaan — standaard volgt dit je profiel (POTA de park-refs, IOTA het serieel + ref, enz.). ‘Voorbeeld’ toont het bestand; ‘Converteer & download’ bewaart het. Formaten zonder custom velden krijgen een verliesmelding + sidecar."
+      },
+      {
+        "id": "wizard",
+        "title": "Uploadwizard",
+        "body": "Weet je niet welk formaat? Kies je bestemming (LoTW, eQSL, QRZ, Club Log, POTA, WWFF, SOTA, contest…) en de tool zet meteen het juiste formaat en profiel klaar. Voor LoTW lever je een conforme ADIF; de ondertekening doe je nadien met TQSL."
+      },
+      {
+        "id": "offline",
+        "title": "Offline & bewaren",
+        "body": "Installeer QSObridge als app (PWA) om offline te werken — ideaal voor portable. Je werk wordt automatisch bewaard en na een herstart aangeboden om te herstellen; je stationsgegevens worden onthouden."
+      },
+      {
+        "id": "disclaimer",
+        "title": "Verantwoordelijkheid",
+        "body": "Gemaakt door ON3VZ. Controleer je uitvoerbestanden altijd voor inzending — reglementen en exchanges wijzigen. Gebruik op eigen risico."
+      }
+    ]
+  },
+  "data": {
+    "button": "Over de data",
+    "title": "Over de data",
+    "import": "cty.dat importeren",
+    "imported": "cty.dat geladen",
+    "reflist": "Referentielijst importeren",
+    "online": "Online opzoeken toestaan (opt-in)",
+    "refkind": "Soort",
+    "refloaded": "geladen"
+  },
+  "checks": {
+    "title": "Suggesties",
+    "apply": "Pas toe",
+    "ignore": "Negeer",
+    "applyAll": "Alles toepassen",
+    "none": "Geen suggesties gevonden",
+    "source": "bron"
+  },
+  "ai": {
+    "button": "AI-assist",
+    "title": "AI-assist",
+    "paste": "Plak een ruwe of papieren log",
+    "key": "API-sleutel (BYOK, lokaal bewaard)",
+    "interpret": "Interpreteer",
+    "add": "Voeg toe als rijen",
+    "none": "Voer eerst een API-sleutel in",
+    "note": "Enkel voor vrije tekst. Output = suggesties (bewerkbaar). De sleutel blijft lokaal; calls gaan rechtstreeks van je browser naar de provider."
+  },
+  "views": {
+    "saved": "Views",
+    "save": "Bewaar view",
+    "delete": "Verwijder view",
+    "name": "Naam van de view"
+  }
+}

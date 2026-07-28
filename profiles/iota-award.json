@@ -1,0 +1,56 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "iota-award",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "IOTA (award)",
+    "fr": "IOTA (award)",
+    "en": "IOTA (award)"
+  },
+  "targetFormat": "adif",
+  "modes": [
+    "*"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "mode",
+    "band",
+    "iota"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": [
+      "myIota"
+    ]
+  },
+  "validation": {
+    "iota": {
+      "validator": "iota",
+      "required": true
+    }
+  },
+  "exportFields": [
+    "call",
+    "date",
+    "time",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "iota"
+  ],
+  "filenamePattern": "{stationCall}-iota.adi",
+  "notes": {
+    "nl": "IOTA-award via ADIF met IOTA-referentievelden (aa-nnn).",
+    "fr": "IOTA award via ADIF (réf aa-nnn).",
+    "en": "IOTA award via ADIF with IOTA reference (aa-nnn)."
+  }
+}

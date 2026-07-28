@@ -1,0 +1,13 @@
+{
+  "name": "QSObridge — QSO Log Converter",
+  "short_name": "QSObridge",
+  "description": "Client-side QSO-logconverter & editor. Alles blijft lokaal.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0B1B2B",
+  "theme_color": "#0B1B2B",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "wwff",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "wwff.co", "updated": "2026-07-27" },
+  "label": { "nl": "WWFF", "fr": "WWFF", "en": "WWFF" },
+  "targetFormat": "adif",
+  "modes": ["*"],
+  "requiredQsoFields": ["call", "datetime", "mode", "band", "rstSent", "rstRcvd"],
+  "header": { "required": ["stationCall", "refs.wwff.mine"], "optional": ["operator"] },
+  "validation": {
+    "refs.wwff.mine": { "validator": "wwff", "required": true },
+    "refs.wwff.worked": { "validator": "wwff" }
+  },
+  "emit": {
+    "MY_SIG": "WWFF",
+    "MY_SIG_INFO": "{refs.wwff.mine}",
+    "MY_WWFF_REF": "{refs.wwff.mine}",
+    "SIG": "WWFF",
+    "SIG_INFO": "{refs.wwff.worked}"
+  },
+  "filenamePattern": "{stationCall}@{refs.wwff.mine} {date}.adi",
+  "notes": {
+    "nl": "ADIF. Spatie vóór de datum in de bestandsnaam. Log naar nationale logmanager.",
+    "fr": "ADIF. Espace avant la date dans le nom de fichier.",
+    "en": "ADIF. Space before the date in the filename."
+  }
+}

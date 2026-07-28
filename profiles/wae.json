@@ -1,0 +1,72 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "wae",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "Worked All Europe",
+    "fr": "Worked All Europe",
+    "en": "Worked All Europe"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": {
+    "CW": "WAEDC-CW",
+    "SSB": "WAEDC-SSB",
+    "RTTY": "WAEDC-RTTY"
+  },
+  "modes": [
+    "CW",
+    "SSB",
+    "RTTY"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "serialSent"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "serialSent"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "serialRcvd"
+      ]
+    }
+  },
+  "validation": {
+    "serialSent": {
+      "type": "int",
+      "min": 1,
+      "required": true
+    }
+  },
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "RST + volgnummer. QTC-verkeer wordt apart behandeld (niet in v1).",
+    "fr": "RST + numéro. Trafic QTC séparé.",
+    "en": "RST + serial. QTC traffic handled separately (not in v1)."
+  }
+}

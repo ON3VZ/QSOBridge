@@ -1,0 +1,21 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "lotw",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "ARRL LoTW / TQSL", "updated": "2026-07-27" },
+  "label": { "nl": "LoTW-klare ADIF", "fr": "ADIF prêt pour LoTW", "en": "LoTW-ready ADIF" },
+  "targetFormat": "adif",
+  "lotwReady": true,
+  "modes": ["*"],
+  "requiredQsoFields": ["call", "datetime", "band", "mode"],
+  "header": { "required": ["stationCall"], "optional": ["myGrid", "myCqZone", "myItuZone"] },
+  "validation": {
+    "myGrid": { "validator": "locator" }
+  },
+  "filenamePattern": "{stationCall}-lotw.adi",
+  "notes": {
+    "nl": "Conforme ADIF met MY_* stationsvelden per QSO. Onderteken daarna met TQSL (.tq8) — die stap valt buiten deze tool.",
+    "fr": "ADIF conforme avec champs MY_* par QSO. Signez ensuite avec TQSL (.tq8).",
+    "en": "Conformant ADIF with per-QSO MY_* fields. Sign afterwards with TQSL (.tq8) — outside this tool."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "arrl-dx",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "ARRL DX",
+    "fr": "ARRL DX",
+    "en": "ARRL DX"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": {
+    "CW": "ARRL-DX-CW",
+    "SSB": "ARRL-DX-SSB"
+  },
+  "modes": [
+    "CW",
+    "SSB"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "state"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "state"
+      ]
+    }
+  },
+  "validation": {},
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "Asymmetrisch: W/VE sturen staat/prov, DX sturen vermogen. In v1 vereenvoudigd tot één exchange-veld — controleer per zijde.",
+    "fr": "Asymétrique : W/VE envoient l'état, DX la puissance.",
+    "en": "Asymmetric: W/VE send state/prov, DX send power. Simplified in v1 — verify per side."
+  }
+}

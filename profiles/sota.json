@@ -1,0 +1,21 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "sota",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "sotadata.org.uk", "updated": "2026-07-27" },
+  "label": { "nl": "SOTA", "fr": "SOTA", "en": "SOTA" },
+  "targetFormat": "sota",
+  "modes": ["*"],
+  "requiredQsoFields": ["call", "datetime", "mode", "freqMHz", "refs.sota.mine"],
+  "header": { "required": ["stationCall"], "optional": [] },
+  "validation": {
+    "refs.sota.mine": { "validator": "sota", "required": true },
+    "refs.sota.worked": { "validator": "sota" }
+  },
+  "filenamePattern": "{stationCall}_{refs.sota.mine}.csv",
+  "notes": {
+    "nl": "Eigen CSV V2. Apart bestand per summit. Frequentie i.p.v. band.",
+    "fr": "CSV V2 propre. Fichier séparé par sommet.",
+    "en": "Own CSV V2. Separate file per summit."
+  }
+}

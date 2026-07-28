@@ -1,0 +1,72 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "iaru-hf",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "IARU HF",
+    "fr": "IARU HF",
+    "en": "IARU HF"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": {
+    "CW": "IARU-HF",
+    "SSB": "IARU-HF"
+  },
+  "modes": [
+    "CW",
+    "SSB"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "ituZone"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "myItuZone"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "myItuZone"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "ituZone"
+      ]
+    }
+  },
+  "validation": {
+    "ituZone": {
+      "type": "int",
+      "min": 1,
+      "max": 90,
+      "required": true
+    }
+  },
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "RST + ITU-zone. HQ-stations sturen society (niet in v1-exchange).",
+    "fr": "RST + zone ITU.",
+    "en": "RST + ITU zone. HQ stations send society (not in v1 exchange)."
+  }
+}

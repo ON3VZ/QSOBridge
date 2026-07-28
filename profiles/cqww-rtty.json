@@ -1,0 +1,72 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "cqww-rtty",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "CQ WW RTTY",
+    "fr": "CQ WW RTTY",
+    "en": "CQ WW RTTY"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": {
+    "RTTY": "CQ-WW-RTTY"
+  },
+  "modes": [
+    "RTTY"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "cqZone"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "myCqZone"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "myCqZone",
+        "myState"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "cqZone",
+        "state"
+      ]
+    }
+  },
+  "validation": {
+    "cqZone": {
+      "type": "int",
+      "min": 1,
+      "max": 40,
+      "required": true
+    }
+  },
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "RST + CQ-zone + QTH (staat/prov of DX).",
+    "fr": "RST + zone CQ + QTH.",
+    "en": "RST + CQ zone + QTH (state/prov or DX)."
+  }
+}

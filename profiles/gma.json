@@ -1,0 +1,57 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "gma",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "GMA",
+    "fr": "GMA",
+    "en": "GMA"
+  },
+  "targetFormat": "adif",
+  "modes": [
+    "*"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "mode",
+    "band"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": [
+      "operator"
+    ]
+  },
+  "validation": {},
+  "emit": {
+    "MY_SIG": "GMA",
+    "MY_SIG_INFO": "{refs.gma.mine}",
+    "SIG": "GMA",
+    "SIG_INFO": "{refs.gma.worked}"
+  },
+  "exportFields": [
+    "call",
+    "date",
+    "time",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "refs.gma.mine",
+    "refs.gma.worked"
+  ],
+  "filenamePattern": "{stationCall}-gma-{date}.adi",
+  "notes": {
+    "nl": "Global Mountain Activity — ADIF met GMA-referentie in SIG/SIG_INFO.",
+    "fr": "GMA — ADIF, réf dans SIG/SIG_INFO.",
+    "en": "Global Mountain Activity — ADIF with GMA reference in SIG/SIG_INFO."
+  }
+}

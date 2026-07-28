@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="QSObridge">
+  <rect width="512" height="512" rx="96" fill="#0B1B2B"/>
+  <rect x="60" y="60" width="392" height="392" rx="64" fill="#0F2233" stroke="#23405C" stroke-width="3"/>
+  <!-- signaalgolven vanaf de bron -->
+  <g fill="none" stroke="#C77E00" stroke-width="12" stroke-linecap="round" opacity="0.6">
+    <path d="M188 214 a 60 60 0 0 1 0 84"/>
+    <path d="M158 194 a 96 96 0 0 1 0 124"/>
+  </g>
+  <!-- brugboog -->
+  <path d="M150 336 Q256 152 362 336" fill="none" stroke="#FFB000" stroke-width="24" stroke-linecap="round"/>
+  <!-- brugdek -->
+  <path d="M138 336 L374 336" stroke="#FFB000" stroke-width="16" stroke-linecap="round"/>
+  <!-- tuien -->
+  <g stroke="#FFB000" stroke-width="7" opacity="0.85">
+    <path d="M256 196 L200 336"/><path d="M256 196 L312 336"/>
+    <path d="M256 196 L168 336"/><path d="M256 196 L344 336"/>
+  </g>
+  <!-- knopen: bron (vol) en doel (hol) -->
+  <circle cx="150" cy="336" r="30" fill="#FFB000"/>
+  <circle cx="362" cy="336" r="30" fill="#0B1B2B" stroke="#FFB000" stroke-width="14"/>
+  <circle cx="256" cy="196" r="14" fill="#0F2233" stroke="#FFB000" stroke-width="10"/>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "iota",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "rsgbcc.org", "updated": "2026-07-27" },
+  "label": { "nl": "RSGB IOTA", "fr": "RSGB IOTA", "en": "RSGB IOTA" },
+  "targetFormat": "cabrillo",
+  "contestTag": { "CW": "IOTA", "SSB": "IOTA" },
+  "modes": ["CW", "SSB"],
+  "requiredQsoFields": ["call", "datetime", "band", "mode", "rstSent", "rstRcvd", "serialSent"],
+  "header": { "required": ["stationCall", "categories.time"], "optional": ["categories.overlay"] },
+  "exchange": {
+    "stationType": { "field": "none", "on": "ALL" },
+    "sent": { "ALL": ["rstSent", "serialSent", "iota"] },
+    "rcvd": { "ALL": ["rstRcvd", "serialRcvd", "iota"] }
+  },
+  "validation": {
+    "iota": { "validator": "iota" },
+    "categories.time": { "enum": ["12-HOURS", "24-HOURS"], "required": true }
+  },
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "RST + volgnummer + IOTA-ref (aa-nnn of ------). CATEGORY-TIME verplicht.",
+    "fr": "RST + numéro + réf IOTA. CATEGORY-TIME obligatoire.",
+    "en": "RST + serial + IOTA ref (aa-nnn or ------). CATEGORY-TIME required."
+  }
+}

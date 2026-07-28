@@ -1,0 +1,59 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "arlhs",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "Vuurtorens (ARLHS)",
+    "fr": "Phares (ARLHS)",
+    "en": "Lighthouses (ARLHS)"
+  },
+  "targetFormat": "adif",
+  "modes": [
+    "*"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "mode",
+    "band"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": []
+  },
+  "validation": {
+    "refs.arlhs.mine": {
+      "validator": "arlhs"
+    }
+  },
+  "emit": {
+    "MY_SIG": "ARLHS",
+    "MY_SIG_INFO": "{refs.arlhs.mine}",
+    "SIG": "ARLHS",
+    "SIG_INFO": "{refs.arlhs.worked}"
+  },
+  "exportFields": [
+    "call",
+    "date",
+    "time",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "refs.arlhs.mine",
+    "refs.arlhs.worked"
+  ],
+  "filenamePattern": "{stationCall}-arlhs-{date}.adi",
+  "notes": {
+    "nl": "Amateur Radio Lighthouse Society — ADIF, ref XXX-nnn in SIG/SIG_INFO.",
+    "fr": "ARLHS — ADIF.",
+    "en": "Amateur Radio Lighthouse Society — ADIF, ref XXX-nnn."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "iaru-r1-vhf",
+  "schemaVersion": "1.0",
+  "meta": { "author": "QSObridge", "source": "IARU R1 VHF Handbook", "updated": "2026-07-27" },
+  "label": { "nl": "IARU R1 VHF", "fr": "IARU R1 VHF", "en": "IARU R1 VHF" },
+  "targetFormat": "edi",
+  "modes": ["CW", "SSB", "FM"],
+  "requiredQsoFields": ["call", "datetime", "mode", "rstSent", "rstRcvd", "serialSent", "gridSquare"],
+  "header": { "required": ["stationCall", "myGrid", "categories.band"], "optional": ["rig.power", "rig.antenna"] },
+  "exchange": {
+    "stationType": { "field": "none", "on": "ALL" },
+    "sent": { "ALL": ["rstSent", "serialSent"] },
+    "rcvd": { "ALL": ["rstRcvd", "serialRcvd", "gridSquare"] }
+  },
+  "validation": {
+    "gridSquare": { "validator": "locator", "required": true },
+    "myGrid": { "validator": "locator", "required": true }
+  },
+  "filenamePattern": "{stationCall}.edi",
+  "notes": {
+    "nl": "RST + volgnummer + WWL-locator. QRB-scoring per km. Bestand = REG1TEST.",
+    "fr": "RST + numéro + locator WWL. Score QRB par km.",
+    "en": "RST + serial + WWL locator. QRB scoring per km."
+  }
+}

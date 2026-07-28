@@ -1,0 +1,60 @@
+{
+  "$schema": "qsobridge-profile/v1",
+  "id": "arrl-fd",
+  "schemaVersion": "1.0",
+  "meta": {
+    "author": "QSObridge",
+    "source": "reglement",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "ARRL Field Day",
+    "fr": "ARRL Field Day",
+    "en": "ARRL Field Day"
+  },
+  "targetFormat": "cabrillo",
+  "contestTag": "ARRL-FD",
+  "modes": [
+    "CW",
+    "SSB",
+    "FM",
+    "FT8"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode"
+  ],
+  "header": {
+    "required": [
+      "stationCall"
+    ],
+    "optional": []
+  },
+  "exchange": {
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "extras.CLASS",
+        "extras.ARRL_SECT"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "extras.CLASS",
+        "extras.ARRL_SECT"
+      ]
+    }
+  },
+  "validation": {},
+  "filenamePattern": "{stationCall}.cbr",
+  "notes": {
+    "nl": "Klasse + sectie (bv. 3A EMA). Velden CLASS en ARRL_SECT.",
+    "fr": "Classe + section (ex. 3A EMA).",
+    "en": "Class + section (e.g. 3A EMA). Fields CLASS and ARRL_SECT."
+  }
+}

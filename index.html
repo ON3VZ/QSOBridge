@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QSObridge — QSO Log Converter</title>
+  <meta name="description" content="Client-side QSO-logconverter & editor. Alles blijft lokaal in je browser.">
+  <meta name="theme-color" content="#0B1B2B">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/qsobridge.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { App } from './js/grid/view.js';
+    window.qsobridge = new App(document.getElementById('app'));
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
+  <noscript>QSObridge heeft JavaScript nodig; alle verwerking gebeurt lokaal in je browser.</noscript>
+</body>
+</html>
