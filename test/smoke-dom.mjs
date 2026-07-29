@@ -184,5 +184,30 @@ check('doelformaat gesynchroniseerd', outfmts[1].value === 'adx' && app.outFmt =
 converts[0].click();
 check('converteer werkt vanaf bovenbalk', true);
 
+// Datumfilter aanwezig + grid-wrap is de scrollcontainer (overflow auto)
+check('datum-van/tot inputs aanwezig', !!document.querySelector('#fFrom') && !!document.querySelector('#fTo'));
+const gw = document.querySelector('#gridWrap');
+check('grid-wrap bestaat als scrollcontainer', !!gw && gw.id === 'gridWrap');
+// datumfilter werkt via de UI
+app.ed.qsos = [
+  (await import('../js/model/qso.js')).makeQso({ call: 'X', datetime: '2026-07-11T20:00:00Z' }),
+  (await import('../js/model/qso.js')).makeQso({ call: 'Y', datetime: '2026-07-25T15:40:00Z' })
+];
+document.querySelector('#fFrom').value = '2026-07-25';
+document.querySelector('#fFrom').dispatchEvent(new dom.window.Event('change'));
+check('datumfilter via UI filtert', app.ed.visible().length === 1 && app.ed.visible()[0].call === 'Y');
+
+// Kop/inzending-formulier: invullen -> komt in de Cabrillo-kop
+app.ed.profileId = 'iota';
+app._headerDialog();
+check('header-formulier geopend', !!document.querySelector('#hCatTime') && !!document.querySelector('#hClub'));
+document.querySelector('#hCatTime').value = '24-HOURS';
+document.querySelector('#hCatAss').value = 'NON-ASSISTED';
+document.querySelector('#hClub').value = 'UBA';
+document.querySelector('#hS').click();
+check('header opgeslagen in sessie', app.ed.session.categories.time === '24-HOURS' && app.ed.session.club === 'UBA');
+const hout = app.ed.export('cabrillo').files[0].content;
+check('Cabrillo-kop bevat ingevulde velden', /CATEGORY-TIME: 24-HOURS/.test(hout) && /CLUB: UBA/.test(hout));
+
 console.log(`\n==== DOM-smoke: ${pass} geslaagd, ${fail} gefaald ====\n`);
 process.exit(fail ? 1 : 0);

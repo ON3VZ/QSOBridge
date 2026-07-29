@@ -27,7 +27,9 @@
     "missing": "missing",
     "enrich": "Enrich (DXCC)",
     "check": "Check",
-    "colops": "Split/merge"
+    "colops": "Split/merge",
+    "from": "from",
+    "to": "to"
   },
   "side": {
     "health": "Health",
@@ -187,5 +189,30 @@
     "split": "Split",
     "merge": "Merge",
     "hint": "e.g. '599 14' → RST + CQ zone, or serial + zone → one exchange field"
+  },
+  "hdr": {
+    "button": "Header / entry",
+    "title": "Header / entry",
+    "station": "Station",
+    "category": "Category",
+    "entry": "Entry",
+    "call": "Callsign",
+    "operators": "Operator(s)",
+    "grid": "Locator",
+    "catop": "Operator",
+    "catassisted": "Assisted",
+    "catpower": "Power",
+    "catband": "Band",
+    "catmode": "Mode",
+    "cattx": "Transmitters",
+    "cattime": "Time",
+    "catoverlay": "Overlay",
+    "score": "Claimed score",
+    "club": "Club",
+    "name": "Name",
+    "address": "Address",
+    "email": "Email",
+    "soapbox": "Soapbox",
+    "save": "Save"
   }
 }

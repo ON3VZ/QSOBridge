@@ -85,6 +85,9 @@ export class App {
           <input id="fCall" type="search" placeholder="${t('tb.call')}">
           <select id="fBand"><option value="">${t('tb.band')}</option></select>
           <select id="fMode"><option value="">${t('tb.mode')}</option></select>
+          <select id="fContest" title="contest" hidden><option value="">contest</option></select>
+          <input type="date" id="fFrom" title="${t('tb.from') || 'van'}" style="width:130px">
+          <input type="date" id="fTo" title="${t('tb.to') || 'tot'}" style="width:130px">
           <label><input type="checkbox" id="fMissing"> ${t('tb.missing')}</label>
           <label><input type="checkbox" id="fDupes"> ${t('side.dupes').toLowerCase()}</label>
         </div>
@@ -112,6 +115,7 @@ export class App {
       </div>
       <div class="exportbar">
         <label style="color:var(--muted)">${t('status.export') || 'Exporteren'}</label>
+        <button id="hdrBtn">${icon('form')} ${t('hdr.button')}</button>
         <span class="spacer"></span>
         ${this._exportControls()}
       </div>
@@ -189,6 +193,7 @@ export class App {
     $('#help').onclick = () => this._helpDialog();
     $('#ai').onclick = () => this._aiDialog();
     this.root.querySelectorAll('.js-expfields').forEach((b) => b.onclick = () => this._exportFieldsDialog());
+    const hb = this.root.querySelector('#hdrBtn'); if (hb) hb.onclick = () => this._headerDialog();
     this.root.querySelectorAll('.js-outfmt').forEach((s) => s.onchange = (e) => { this.outFmt = e.target.value; this._syncOutFmt(); });
     $('#profile').onchange = (e) => {
       this.ed.profileId = e.target.value || null;
@@ -218,10 +223,12 @@ export class App {
     $('#colops').onclick = () => this._colOpsDialog();
     this.root.querySelectorAll('.js-preview').forEach((b) => b.onclick = () => this._previewDialog());
     this.root.querySelectorAll('.js-convert').forEach((b) => b.onclick = () => this._convert());
-    for (const [id, key] of [['#fCall', 'call'], ['#fBand', 'band'], ['#fMode', 'mode']]) {
+    for (const [id, key] of [['#fCall', 'call'], ['#fBand', 'band'], ['#fMode', 'mode'], ['#fContest', 'contest']]) {
       $(id).oninput = (e) => { this.ed.setFilter({ [key]: e.target.value }); this.render(); };
     }
     $('#fMissing').onchange = (e) => { this.ed.setFilter({ onlyMissing: e.target.checked }); this.render(); };
+    $('#fFrom').onchange = (e) => { this.ed.setFilter({ dateFrom: e.target.value }); this.render(); };
+    $('#fTo').onchange = (e) => { this.ed.setFilter({ dateTo: e.target.value }); this.render(); };
     $('#fDupes').onchange = (e) => { this.ed.setFilter({ onlyDupes: e.target.checked }); this.render(); };
 
     const wrap = $('#gridWrap');
@@ -399,6 +406,15 @@ export class App {
     const modes = [...new Set(this.ed.qsos.map((q) => q.mode).filter(Boolean))].sort();
     const fill = (sel, vals, cur) => { const el = this.root.querySelector(sel); const v = el.value; el.innerHTML = `<option value="">${sel === '#fBand' ? 'band' : 'mode'}</option>` + vals.map((x) => `<option${x === v ? ' selected' : ''}>${x}</option>`).join(''); };
     fill('#fBand', bands); fill('#fMode', modes);
+    const contests = [...new Set(this.ed.qsos.map((q) => q.extras && q.extras.CONTEST_ID).filter(Boolean))].sort();
+    const cs = this.root.querySelector('#fContest');
+    if (cs) {
+      if (contests.length) {
+        const cv = cs.value;
+        cs.hidden = false;
+        cs.innerHTML = `<option value="">contest…</option>` + contests.map((x) => `<option${x === cv ? ' selected' : ''}>${x}</option>`).join('');
+      } else { cs.hidden = true; }
+    }
   }
 
   _stats() {
@@ -613,6 +629,61 @@ export class App {
       dlg.close(); this.render(); this._toast(`${n} vervanging(en)`);
     };
   }
+  _headerDialog() {
+    const s = this.ed.session;
+    const cat = s.categories || {};
+    const prof = this.ed.profileId ? this.ed.profile() : null;
+    const req = new Set((prof && prof.header && prof.header.required) || []);
+    const need = (k) => req.has(k) ? ' <span class="reqdot" title="verplicht">•</span>' : '';
+    const sel = (id, val, opts) => `<select id="${id}"><option value="">—</option>${opts.map((o) => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}</select>`;
+    const txt = (id, val, w = 160) => `<input id="${id}" value="${escapeAttr(val == null ? '' : val)}" style="width:${w}px">`;
+    const H = (s2) => `<h3 style="color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px">${s2}</h3>`;
+    const row = (lab, ctrl) => `<div class="map-row"><label>${lab}</label>${ctrl}</div>`;
+    const body = `
+      ${H(t('hdr.station'))}
+      ${row(t('hdr.call') + need('stationCall'), txt('hCall', s.stationCall))}
+      ${row(t('hdr.operators'), txt('hOps', s.operator))}
+      ${row(t('hdr.grid') + need('myGrid'), txt('hGrid', s.myGrid, 110))}
+      ${H(t('hdr.category'))}
+      ${row(t('hdr.catop') + need('categories.operator'), sel('hCatOp', cat.operator, ['SINGLE-OP', 'MULTI-OP', 'CHECKLOG']))}
+      ${row(t('hdr.catassisted') + need('categories.assisted'), sel('hCatAss', cat.assisted, ['ASSISTED', 'NON-ASSISTED']))}
+      ${row(t('hdr.catpower') + need('categories.power'), sel('hCatPow', cat.power, ['HIGH', 'LOW', 'QRP']))}
+      ${row(t('hdr.catband') + need('categories.band'), sel('hCatBand', cat.band, ['ALL', '160M', '80M', '40M', '20M', '15M', '10M', '6M', '2M', '70CM']))}
+      ${row(t('hdr.catmode') + need('categories.mode'), sel('hCatMode', cat.mode, ['SSB', 'CW', 'RTTY', 'DIGI', 'FM', 'MIXED']))}
+      ${row(t('hdr.cattx') + need('categories.transmitter'), sel('hCatTx', cat.transmitter, ['ONE', 'TWO', 'LIMITED', 'UNLIMITED', 'SWL']))}
+      ${row(t('hdr.cattime') + need('categories.time'), sel('hCatTime', cat.time, ['6-HOURS', '12-HOURS', '24-HOURS']))}
+      ${row(t('hdr.catoverlay'), txt('hCatOv', cat.overlay, 130))}
+      ${H(t('hdr.entry'))}
+      ${row(t('hdr.score'), txt('hScore', s.claimedScore, 120))}
+      ${row(t('hdr.club'), txt('hClub', s.club))}
+      ${row(t('hdr.name'), txt('hName', s.name))}
+      ${row(t('hdr.email'), txt('hEmail', s.email))}
+      ${row(t('hdr.address'), `<textarea id="hAddr" style="width:220px;height:48px">${escapeAttr((s.address || []).join('\n'))}</textarea>`)}
+      ${row(t('hdr.soapbox'), `<textarea id="hSoap" style="width:220px;height:60px">${escapeAttr(s.soapbox || '')}</textarea>`)}`;
+    const dlg = this._dlg(t('hdr.title'), body, `<button id="hC">${t('dlg.cancel')}</button><button class="primary" id="hS">${t('hdr.save')}</button>`);
+    dlg.querySelector('#hC').onclick = () => dlg.close();
+    dlg.querySelector('#hS').onclick = () => {
+      const g = (id) => dlg.querySelector('#' + id).value.trim();
+      s.stationCall = g('hCall') || null;
+      s.operator = g('hOps') || null;
+      s.myGrid = g('hGrid').toUpperCase() || null;
+      s.categories = {
+        operator: g('hCatOp') || null, assisted: g('hCatAss') || null, power: g('hCatPow') || null,
+        band: g('hCatBand') || null, mode: g('hCatMode') || null, transmitter: g('hCatTx') || null,
+        time: g('hCatTime') || null, overlay: g('hCatOv') || null
+      };
+      s.claimedScore = g('hScore') ? Number(g('hScore').replace(/[^\d-]/g, '')) : null;
+      s.club = g('hClub') || null;
+      s.name = g('hName') || null;
+      s.email = g('hEmail') || null;
+      s.address = g('hAddr') ? g('hAddr').split('\n').map((x) => x.trim()).filter(Boolean) : [];
+      s.soapbox = g('hSoap') || null;
+      this.store.saveStation(s);
+      dlg.close(); this.render();
+      this._toast(t('hdr.save') + ' ✓');
+    };
+  }
+
   _colOpsDialog() {
     const cols = this.columns();
     const srcOpts = cols.map((c) => `<option value="${c.key}">${escapeAttr(c.label)}</option>`).join('');

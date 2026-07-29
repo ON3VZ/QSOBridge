@@ -160,6 +160,8 @@ export function serialize({ qsos, session, profile } = {}) {
   if (s.claimedScore != null) out.push(`CLAIMED-SCORE: ${s.claimedScore}`);
   if (s.club) out.push(`CLUB: ${s.club}`);
   if (s.name) out.push(`NAME: ${s.name}`);
+  if (Array.isArray(s.address)) for (const l of s.address) if (l) out.push(`ADDRESS: ${l}`);
+  if (s.email) out.push(`EMAIL: ${s.email}`);
   if (s.myGrid) out.push(`GRID-LOCATOR: ${s.myGrid}`);
   if (s.operator) out.push(`OPERATORS: ${s.operator}`);
   if (s.soapbox) for (const l of String(s.soapbox).split('\n')) out.push(`SOAPBOX: ${l}`);
@@ -202,7 +204,8 @@ function buildExchange(exchange, who, q, s) {
   return fields.map((path) => {
     let v = getPath(q, path);
     if (v == null) v = getPath(s, path);
-    if ((v == null || v === '') && path === 'iota') v = '------'; // IOTA-conventie
+    const isIotaField = path === 'iota' || path === 'myIota';
+    if (isIotaField && (v == null || v === '' || String(v).toLowerCase() === 'none')) v = '------'; // IOTA-conventie
     return v == null ? '' : String(v);
   }).filter((x) => x !== '');
 }

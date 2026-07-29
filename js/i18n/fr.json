@@ -27,7 +27,9 @@
     "missing": "manquant",
     "enrich": "Enrichir (DXCC)",
     "check": "Vérifier",
-    "colops": "Scinder/fusionner"
+    "colops": "Scinder/fusionner",
+    "from": "de",
+    "to": "à"
   },
   "side": {
     "health": "Santé",
@@ -187,5 +189,30 @@
     "split": "Scinder",
     "merge": "Fusionner",
     "hint": "ex. '599 14' → RST + zone CQ"
+  },
+  "hdr": {
+    "button": "En-tête / soumission",
+    "title": "En-tête / soumission",
+    "station": "Station",
+    "category": "Catégorie",
+    "entry": "Soumission",
+    "call": "Indicatif",
+    "operators": "Opérateur(s)",
+    "grid": "Locator",
+    "catop": "Opérateur",
+    "catassisted": "Assisté",
+    "catpower": "Puissance",
+    "catband": "Bande",
+    "catmode": "Mode",
+    "cattx": "Émetteurs",
+    "cattime": "Temps",
+    "catoverlay": "Overlay",
+    "score": "Score revendiqué",
+    "club": "Club",
+    "name": "Nom",
+    "address": "Adresse",
+    "email": "Courriel",
+    "soapbox": "Soapbox",
+    "save": "Enregistrer"
   }
 }

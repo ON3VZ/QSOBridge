@@ -27,7 +27,9 @@
     "missing": "ontbrekend",
     "enrich": "Verrijk (DXCC)",
     "check": "Controleer",
-    "colops": "Splitsen/samenv."
+    "colops": "Splitsen/samenv.",
+    "from": "van",
+    "to": "tot"
   },
   "side": {
     "health": "Gezondheid",
@@ -187,5 +189,30 @@
     "split": "Splitsen",
     "merge": "Samenvoegen",
     "hint": "bv. '599 14' → RST + CQ-zone, of serieel + zone → één exchange-veld"
+  },
+  "hdr": {
+    "button": "Kop / inzending",
+    "title": "Kop / inzending",
+    "station": "Station",
+    "category": "Categorie",
+    "entry": "Inzending",
+    "call": "Roepnaam",
+    "operators": "Operator(s)",
+    "grid": "Locator",
+    "catop": "Operator",
+    "catassisted": "Assisted",
+    "catpower": "Vermogen",
+    "catband": "Band",
+    "catmode": "Mode",
+    "cattx": "Zenders",
+    "cattime": "Tijd",
+    "catoverlay": "Overlay",
+    "score": "Claimed score",
+    "club": "Club",
+    "name": "Naam",
+    "address": "Adres",
+    "email": "E-mail",
+    "soapbox": "Soapbox",
+    "save": "Bewaar"
   }
 }

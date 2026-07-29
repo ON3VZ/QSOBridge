@@ -63,6 +63,19 @@ export function parse(text) {
       warnings.push({ record: recNo, reason: `ADIF-record overgeslagen: ${e.message}` });
     }
   }
+  // Stationsgegevens uit de records afleiden als de header ze niet gaf (QRZ e.d. zetten ze per QSO).
+  if (qsos.length) {
+    const pick = (key) => {
+      for (const q of qsos) { const v = q.extras && q.extras[key]; if (v && String(v).toLowerCase() !== 'none') return v; }
+      return null;
+    };
+    if (!session.stationCall) { const c = pick('STATION_CALLSIGN'); if (c) session.stationCall = normCall(c); }
+    if (!session.operator) { const o = pick('OPERATOR'); if (o) session.operator = normCall(o); }
+    if (!session.myGrid) { const g = pick('MY_GRIDSQUARE'); if (g) session.myGrid = String(g).toUpperCase(); }
+    if (session.myCqZone == null) { const z = pick('MY_CQ_ZONE'); if (z) session.myCqZone = parseInt(z, 10); }
+    if (session.myItuZone == null) { const z = pick('MY_ITU_ZONE'); if (z) session.myItuZone = parseInt(z, 10); }
+    if (!session.myIota) { const i = pick('MY_IOTA'); if (i) session.myIota = String(i).toUpperCase(); }
+  }
   return { qsos, session, warnings };
 }
 

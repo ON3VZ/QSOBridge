@@ -19,7 +19,7 @@ export class QsoEditor {
     this.qsos = qsos;
     this.session = session || {};
     this.profileId = null;
-    this.filters = { band: '', mode: '', call: '', onlyMissing: false, onlyDupes: false };
+    this.filters = { band: '', mode: '', call: '', contest: '', dateFrom: '', dateTo: '', onlyMissing: false, onlyDupes: false };
     this.sort = { path: null, dir: 1 };
     this.hiddenCols = new Set();
     this.dupeOpts = { fields: ['call', 'band', 'mode'] };
@@ -79,6 +79,12 @@ export class QsoEditor {
       if (f.band && q.band !== f.band) return false;
       if (f.mode && q.mode !== f.mode) return false;
       if (f.call && !(q.call || '').toUpperCase().includes(f.call.toUpperCase())) return false;
+      if (f.contest && ((q.extras && q.extras.CONTEST_ID) || '') !== f.contest) return false;
+      if (f.dateFrom || f.dateTo) {
+        const d = q.datetime ? q.datetime.slice(0, 10) : '';
+        if (f.dateFrom && (!d || d < f.dateFrom)) return false;
+        if (f.dateTo && (!d || d > f.dateTo)) return false;
+      }
       if (f.onlyDupes && !q.isDupe) return false;
       if (f.onlyMissing) { const r = this.report(); if (!r.qsoIssues[q.id]) return false; }
       return true;
@@ -112,7 +118,13 @@ export class QsoEditor {
   }
   toggleSelect(id) { const q = this.qsos.find((x) => x.id === id); if (q) q.selected = !q.selected; }
   selectAll(v = true) { for (const q of this.qsos) q.selected = v; }
-  selectFiltered(v = true) { const set = new Set(this.visible().map((q) => q.id)); for (const q of this.qsos) if (set.has(q.id)) q.selected = v; }
+  selectFiltered(v = true) {
+    const set = new Set(this.visible().map((q) => q.id));
+    for (const q of this.qsos) {
+      if (set.has(q.id)) q.selected = v;
+      else if (v) q.selected = false; // exclusief: enkel wat nu gefilterd is
+    }
+  }
   deleteSelected() {
     this._snapshot();
     this.qsos = this.qsos.filter((q) => !q.selected);

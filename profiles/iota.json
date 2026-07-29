@@ -11,7 +11,7 @@
   "header": { "required": ["stationCall", "categories.time"], "optional": ["categories.overlay"] },
   "exchange": {
     "stationType": { "field": "none", "on": "ALL" },
-    "sent": { "ALL": ["rstSent", "serialSent", "iota"] },
+    "sent": { "ALL": ["rstSent", "serialSent", "myIota"] },
     "rcvd": { "ALL": ["rstRcvd", "serialRcvd", "iota"] }
   },
   "validation": {

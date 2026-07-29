@@ -670,6 +670,58 @@ Fed. Rep. of Germany:     14:  28:  EU:   51.00:   -10.00:    -1.0:  DL:
   const edM = new Ed2([mk({ call: 'A', rstSent: '599', serialSent: 12 })], makeSession());
   const nM = edM.mergeColumns(['rstSent', 'serialSent'], { separator: ' ', target: 'extras.EXCH_SENT' });
   check('mergeColumns: samengevoegd', nM === 1 && edM.qsos[0].extras.EXCH_SENT === '599 12');
+
+  // ---- Echte-log fixes (IOTA-contest) ----
+  const adifMod = await import('../js/formats/adif.js');
+  const cabMod = await import('../js/formats/cabrillo.js');
+  const { getProfile: gp2 } = await import('../js/engine/profiles.js');
+  // Parser haalt stationscall + my_iota uit de records (QRZ zet ze per QSO)
+  const perRec = '<eoh>\n<call:4>II3Y<qso_date:8>20260725<time_on:4>1540<band:3>15m<mode:3>SSB<rst_sent:2>59<rst_rcvd:2>59<stx:1>1<srx:3>384<iota:6>EU-130<station_callsign:5>ON3VZ<my_iota:4>none<contest_id:9>RSGB-IOTA<eor>';
+  const p2 = adifMod.parse(perRec);
+  check('parser: stationscall uit record', p2.session.stationCall === 'ON3VZ');
+  check('parser: my_iota=none -> geen eigen iota', !p2.session.myIota);
+  check('parser: stx->serialSent, srx->serialRcvd', p2.qsos[0].serialSent === 1 && p2.qsos[0].serialRcvd === 384);
+  check('parser: iota (ontvangen)', p2.qsos[0].iota === 'EU-130');
+  // IOTA-serialize: verzonden ------, ontvangen EU-130
+  const iotaCab = cabMod.serialize({ qsos: p2.qsos, session: p2.session, profile: gp2('iota') });
+  const qline = iotaCab.files[0].content.split('\n').find((l) => l.startsWith('QSO:'));
+  check('IOTA: kop bevat CALLSIGN', /CALLSIGN: ON3VZ/.test(iotaCab.files[0].content));
+  check('IOTA: verzonden ref = ------ (geen eiland)', /59 1 ------ II3Y/.test(qline), `(${qline})`);
+  check('IOTA: ontvangen ref = EU-130', /II3Y 59 384 EU-130/.test(qline), `(${qline})`);
+
+  // Contest-filter isoleert één contest
+  const mixed = new Ed2([
+    mk({ call: 'A', extras: { CONTEST_ID: 'RSGB-IOTA' } }),
+    mk({ call: 'B', extras: { CONTEST_ID: 'IARU-HF' } }),
+    mk({ call: 'C', extras: { CONTEST_ID: 'RSGB-IOTA' } })
+  ], makeSession());
+  mixed.setFilter({ contest: 'RSGB-IOTA' });
+  check('contest-filter houdt enkel RSGB-IOTA', mixed.visible().length === 2 && mixed.visible().every((q) => q.extras.CONTEST_ID === 'RSGB-IOTA'));
+
+  // Datumfilter (bereik)
+  const byDate = new Ed2([
+    mk({ call: 'A', datetime: '2026-07-11T20:00:00Z' }),
+    mk({ call: 'B', datetime: '2026-07-25T15:40:00Z' }),
+    mk({ call: 'C', datetime: '2026-07-26T09:00:00Z' })
+  ], makeSession());
+  byDate.setFilter({ dateFrom: '2026-07-25', dateTo: '2026-07-26' });
+  check('datumfilter isoleert het weekend', byDate.visible().length === 2 && byDate.visible().every((q) => q.datetime >= '2026-07-25'));
+
+  // "Selecteer gefilterde" = exclusief (enkel de gefilterde blijven geselecteerd)
+  byDate.selectFiltered(true);
+  const selCalls = byDate.qsos.filter((q) => q.selected).map((q) => q.call).sort();
+  check('selecteer-gefilterde is exclusief', selCalls.length === 2 && !selCalls.includes('A'));
+
+  // Header-/inzendingsvelden komen in de Cabrillo-kop
+  const hs = makeSession({ stationCall: 'ON3VZ', myGrid: 'JO21EE' });
+  hs.categories = { operator: 'SINGLE-OP', assisted: 'NON-ASSISTED', power: 'LOW', time: '24-HOURS', band: 'ALL', mode: 'SSB' };
+  hs.claimedScore = 12345; hs.club = 'UBA'; hs.name = 'Kristof'; hs.email = 'x@y.be';
+  hs.address = ['Straat 1', '2000 Antwerpen']; hs.soapbox = 'Leuke contest';
+  const hcab = cabMod.serialize({ qsos: [mk({ call: 'A', datetime: '2026-07-25T15:00:00Z', band: '20m', mode: 'SSB', rstSent: '59', rstRcvd: '59', serialSent: 1, serialRcvd: 2 })], session: hs, profile: gp2('iota') }).files[0].content;
+  check('kop: CATEGORY-ASSISTED', /CATEGORY-ASSISTED: NON-ASSISTED/.test(hcab));
+  check('kop: CATEGORY-POWER + TIME', /CATEGORY-POWER: LOW/.test(hcab) && /CATEGORY-TIME: 24-HOURS/.test(hcab));
+  check('kop: CLAIMED-SCORE + CLUB', /CLAIMED-SCORE: 12345/.test(hcab) && /CLUB: UBA/.test(hcab));
+  check('kop: ADDRESS + EMAIL + SOAPBOX', /ADDRESS: 2000 Antwerpen/.test(hcab) && /EMAIL: x@y.be/.test(hcab) && /SOAPBOX: Leuke contest/.test(hcab));
 }
 
 console.log(`\n==== ${pass} geslaagd, ${fail} gefaald ====\n`);
