@@ -2,21 +2,74 @@
   "$schema": "qsobridge-profile/v1",
   "id": "iota",
   "schemaVersion": "1.0",
-  "meta": { "author": "QSObridge", "source": "rsgbcc.org", "updated": "2026-07-27" },
-  "label": { "nl": "RSGB IOTA", "fr": "RSGB IOTA", "en": "RSGB IOTA" },
+  "meta": {
+    "author": "QSObridge",
+    "source": "rsgbcc.org",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "RSGB IOTA-contest",
+    "fr": "Concours RSGB IOTA",
+    "en": "RSGB IOTA contest"
+  },
   "targetFormat": "cabrillo",
-  "contestTag": { "CW": "RSGB-IOTA", "SSB": "RSGB-IOTA" },
-  "modes": ["CW", "SSB"],
-  "requiredQsoFields": ["call", "datetime", "band", "mode", "rstSent", "rstRcvd", "serialSent"],
-  "header": { "required": ["stationCall", "categories.time"], "optional": ["categories.overlay"] },
+  "contestTag": {
+    "CW": "RSGB-IOTA",
+    "SSB": "RSGB-IOTA"
+  },
+  "modes": [
+    "CW",
+    "SSB"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "serialSent"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "categories.time"
+    ],
+    "optional": [
+      "categories.overlay"
+    ]
+  },
   "exchange": {
-    "stationType": { "field": "none", "on": "ALL" },
-    "sent": { "ALL": ["rstSent", "serialSent", "myIota"] },
-    "rcvd": { "ALL": ["rstRcvd", "serialRcvd", "iota"] }
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "serialSent",
+        "myIota"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "serialRcvd",
+        "iota"
+      ]
+    }
   },
   "validation": {
-    "iota": { "validator": "iota" },
-    "categories.time": { "enum": ["12-HOURS", "24-HOURS"], "required": true }
+    "iota": {
+      "validator": "iota"
+    },
+    "categories.time": {
+      "enum": [
+        "12-HOURS",
+        "24-HOURS"
+      ],
+      "required": true
+    }
   },
   "filenamePattern": "{stationCall}.cbr",
   "notes": {

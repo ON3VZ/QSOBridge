@@ -2,26 +2,105 @@
   "$schema": "qsobridge-profile/v1",
   "id": "uba-dx",
   "schemaVersion": "1.0",
-  "meta": { "author": "QSObridge", "source": "uba.be", "updated": "2026-07-27" },
-  "label": { "nl": "UBA DX", "fr": "UBA DX", "en": "UBA DX" },
+  "meta": {
+    "author": "QSObridge",
+    "source": "uba.be",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "UBA DX",
+    "fr": "UBA DX",
+    "en": "UBA DX"
+  },
   "targetFormat": "cabrillo",
-  "contestTag": { "CW": "UBA-DX-CW", "SSB": "UBA-DX-SSB" },
-  "modes": ["CW", "SSB"],
-  "requiredQsoFields": ["call", "datetime", "band", "mode", "rstSent", "rstRcvd", "serialSent"],
-  "header": { "required": ["stationCall", "categories.operator", "myProvince"], "optional": ["club", "soapbox"] },
+  "contestTag": {
+    "CW": "UBA-DX-CW",
+    "SSB": "UBA-DX-SSB"
+  },
+  "modes": [
+    "CW",
+    "SSB"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "serialSent"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "categories.operator",
+      "mySection"
+    ],
+    "optional": [
+      "club",
+      "soapbox"
+    ]
+  },
   "exchange": {
-    "stationType": { "field": "callPrefix", "on": "ON" },
-    "sent": { "ON": ["rstSent", "serialSent", "myProvince"], "DX": ["rstSent", "serialSent"] },
-    "rcvd": { "ON": ["rstRcvd", "serialRcvd", "province"], "DX": ["rstRcvd", "serialRcvd"] }
+    "stationType": {
+      "field": "callPrefix",
+      "on": "ON",
+      "match": "^O[N-T]"
+    },
+    "sent": {
+      "ON": [
+        "rstSent",
+        "serialSent",
+        "mySection"
+      ],
+      "DX": [
+        "rstSent",
+        "serialSent"
+      ]
+    },
+    "rcvd": {
+      "ON": [
+        "rstRcvd",
+        "serialRcvd",
+        "section"
+      ],
+      "DX": [
+        "rstRcvd",
+        "serialRcvd"
+      ]
+    }
   },
   "validation": {
-    "myProvince": { "enum": ["AN", "BW", "HT", "LB", "LG", "NM", "LU", "OV", "WV", "VB", "BR"], "required": true },
-    "serialSent": { "type": "int", "min": 1, "required": true }
+    "myProvince": {
+      "enum": [
+        "AN",
+        "BW",
+        "HT",
+        "LB",
+        "LG",
+        "NM",
+        "LU",
+        "OV",
+        "WV",
+        "VB",
+        "BR"
+      ],
+      "required": true
+    },
+    "serialSent": {
+      "type": "int",
+      "min": 1,
+      "required": true
+    },
+    "mySection": {
+      "pattern": "^([A-Z]{3}|XXX)$",
+      "required": true
+    }
   },
   "filenamePattern": "{stationCall}.cbr",
   "notes": {
-    "nl": "ON: RST + volgnummer + provincie (2 ltr). DX: RST + volgnummer. Provincie ook in header.",
-    "fr": "Stations ON : RST + numéro + province (2 lettres). DX : RST + numéro.",
-    "en": "ON stations: RST + serial + province (2-letter). DX: RST + serial."
+    "nl": "ON: RST + volgnummer + UBA-sectie (3 letters, of XXX voor niet-leden). DX: RST + volgnummer.",
+    "fr": "ON: RST + numéro + section UBA (3 lettres, ou XXX). DX: RST + numéro.",
+    "en": "ON: RST + serial + UBA section (3 letters, or XXX for non-members). DX: RST + serial."
   }
 }

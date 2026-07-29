@@ -237,16 +237,26 @@ console.log('\n[Fase 5: profielen + validatie]');
   const wSer = adif.serialize({ qsos: [makeQso({ call: 'G0X', datetime: '2026-07-26T14:00:00Z', band: '40m', mode: 'CW', refs: { wwff: { mine: 'ONFF-0001', worked: null } } })], session: pSession, profile: getProfile('wwff') });
   check('WWFF-bestandsnaam met spatie', wSer.files[0].name === 'ON3VZ@ONFF-0001 20260726.adi', `(${wSer.files[0].name})`);
 
-  // UBA DX Cabrillo: asymmetrische exchange (ON stuurt provincie, ontvangt provincie van ON, niets van DX)
-  const uSession = makeSession({ stationCall: 'ON3VZ', myProvince: 'OV', categories: { operator: 'SINGLE-OP' } });
-  const onQso = makeQso({ call: 'ON4ABC', datetime: '2026-07-26T14:00:00Z', band: '20m', mode: 'SSB', rstSent: '59', rstRcvd: '59', serialSent: 1, serialRcvd: 5, province: 'AN' });
+  // UBA DX Cabrillo: asymmetrische exchange (ON stuurt UBA-sectie, ontvangt sectie van ON, niets van DX)
+  const uSession = makeSession({ stationCall: 'ON3VZ', mySection: 'ACC', categories: { operator: 'SINGLE-OP' } });
+  const onQso = makeQso({ call: 'ON4ABC', datetime: '2026-07-26T14:00:00Z', band: '20m', mode: 'SSB', rstSent: '59', rstRcvd: '59', serialSent: 1, serialRcvd: 5, section: 'DST' });
   const dxQso = makeQso({ call: 'DL1XYZ', datetime: '2026-07-26T14:05:00Z', band: '20m', mode: 'SSB', rstSent: '59', rstRcvd: '59', serialSent: 2, serialRcvd: 9 });
   const uSer = cab.serialize({ qsos: [onQso, dxQso], session: uSession, profile: getProfile('uba-dx') });
   const uLines = uSer.files[0].content.split('\n').filter((l) => l.startsWith('QSO:'));
-  check('UBA: CONTEST-tag ontbreekt niet', /CONTEST: UBA-DX/.test(uSer.files[0].content) || true);
-  check('UBA ON-QSO bevat provincie AN', /ON4ABC/.test(uLines[0]) && /\bAN\b/.test(uLines[0]), `(${uLines[0]})`);
-  check('UBA ON-QSO stuurt eigen provincie OV', /\bOV\b/.test(uLines[0]), `(${uLines[0]})`);
-  check('UBA DX-QSO ontvangt GEEN provincie', /DL1XYZ/.test(uLines[1]) && !/\bAN\b/.test(uLines[1]), `(${uLines[1]})`);
+  check('UBA: CONTEST-tag UBA-DX', /CONTEST: UBA-DX/.test(uSer.files[0].content));
+  check('UBA ON-QSO bevat ontvangen sectie DST', /ON4ABC/.test(uLines[0]) && /\bDST\b/.test(uLines[0]), `(${uLines[0]})`);
+  check('UBA ON-QSO stuurt eigen sectie ACC', /\bACC\b/.test(uLines[0]), `(${uLines[0]})`);
+  check('UBA DX-QSO ontvangt GEEN sectie', /DL1XYZ/.test(uLines[1]) && !/\bDST\b/.test(uLines[1]), `(${uLines[1]})`);
+  // Belgische contest-prefix (OP/OT) telt ook als ON
+  const opQso = makeQso({ call: 'OP4K', datetime: '2026-07-26T14:10:00Z', band: '20m', mode: 'CW', rstSent: '599', rstRcvd: '599', serialSent: 3, serialRcvd: 7, section: 'LGE' });
+  const opLine = cab.serialize({ qsos: [opQso], session: uSession, profile: getProfile('uba-dx') }).files[0].content.split('\n').find((l) => l.startsWith('QSO:'));
+  check('UBA: OP-prefix telt als Belgisch (sectie ontvangen)', /\bLGE\b/.test(opLine), `(${opLine})`);
+
+  // ARRL DX (DX-perspectief, bv. ON): verzendt RST + vermogen, ontvangt RST + staat
+  const arrlS = makeSession({ stationCall: 'ON3VZ', categories: { power: 'LOW' } });
+  const arrlQ = makeQso({ call: 'K1ABC', datetime: '2026-02-21T14:00:00Z', band: '20m', mode: 'CW', rstSent: '599', rstRcvd: '599', state: 'MA', extras: { TX_PWR: '100' } });
+  const arrlLine = cab.serialize({ qsos: [arrlQ], session: arrlS, profile: getProfile('arrl-dx') }).files[0].content.split('\n').find((l) => l.startsWith('QSO:'));
+  check('ARRL DX: verzendt vermogen, ontvangt staat', /ON3VZ 599 100 K1ABC 599 MA/.test(arrlLine), `(${arrlLine})`);
 
   // Validatie: ontbrekend verplicht veld + ongeldige ref
   const badPota = makeQso({ call: 'DL1ABC', datetime: '2026-07-26T14:00:00Z', mode: 'FT8', band: '20m', refs: { pota: { mine: 'BADREF!!', worked: null } } });
@@ -255,9 +265,9 @@ console.log('\n[Fase 5: profielen + validatie]');
   check('validatie header: eigen park verplicht ontbreekt', !!v.headerIssues['refs.pota.mine']);
   check('validatie summary telt', v.summary.invalid >= 1);
 
-  // Validatie: UBA provincie-enum
-  const vUba = validateQsos([onQso], makeSession({ stationCall: 'ON3VZ', myProvince: 'ZZ', categories: { operator: 'SO' } }), getProfile('uba-dx'));
-  check('UBA ongeldige provincie in header', !!vUba.headerIssues['myProvince']);
+  // Validatie: UBA sectie-patroon
+  const vUba = validateQsos([onQso], makeSession({ stationCall: 'ON3VZ', mySection: 'ZZ', categories: { operator: 'SO' } }), getProfile('uba-dx'));
+  check('UBA ongeldige sectie in header', !!vUba.headerIssues['mySection']);
 
   // Bandplan-issue verschijnt in validatie
   const bandBad = makeQso({ call: 'DL1ABC', datetime: '2026-07-26T14:00:00Z', mode: 'CW', band: '40m', freqMHz: 14.030, rstSent: '599', rstRcvd: '599', serialSent: 1, cqZone: 14 });
@@ -449,8 +459,8 @@ console.log('\n[Fase 6: velddetectie, export-selectie, i18n, autosave]');
   const iof = profileExportFields(getProfile('iota'));
   check('IOTA-export bevat serial + iota', iof.has('serialSent') && iof.has('iota'));
   const uf = profileExportFields(getProfile('uba-dx'));
-  check('UBA-export bevat ontvangen provincie', uf.has('province'));
-  check('UBA-export sluit eigen myProvince uit (header)', !uf.has('myProvince'));
+  check('UBA-export bevat ontvangen sectie', uf.has('section'));
+  check('UBA-export sluit eigen mySection uit (header)', !uf.has('mySection'));
   const sf = profileExportFields(getProfile('sota'));
   check('SOTA-export bevat freq + summit-refs', sf.has('freqMHz') && sf.has('refs.sota.mine'));
   const wf = profileExportFields(getProfile('wwff'));

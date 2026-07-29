@@ -42,6 +42,9 @@ function applyRule(path, rule, value) {
   if (rule.enum && !rule.enum.includes(String(value))) {
     return { code: 'ENUM', severity: 'error', message: `${path}: '${value}' niet in toegestane lijst` };
   }
+  if (rule.pattern && !new RegExp(rule.pattern).test(String(value))) {
+    return { code: 'PATTERN', severity: 'error', message: `${path}: '${value}' heeft een ongeldige vorm` };
+  }
   if (rule.type === 'int') {
     const n = Number(value);
     if (!Number.isInteger(n)) return { code: 'TYPE', severity: 'error', message: `${path} moet een geheel getal zijn` };

@@ -197,12 +197,15 @@ function qsoLine(q, s, profile) {
 
 /** Bouwt de exchange-tokens uit de profieldefinitie (per stationstype). */
 function buildExchange(exchange, who, q, s) {
-  const onCode = (exchange.stationType && exchange.stationType.on) || 'ALL';
-  const none = !exchange.stationType || exchange.stationType.field === 'none';
+  const st = exchange.stationType;
+  const onCode = (st && st.on) || 'ALL';
+  const none = !st || st.field === 'none';
+  const matcher = st && st.match ? new RegExp(st.match) : null;
+  const isOn = (call) => matcher ? matcher.test(String(call || '').toUpperCase()) : String(call || '').toUpperCase().startsWith(onCode);
   let type;
   if (none) type = 'ALL';
-  else if (who === 'sent') type = (s.myProvince || (s.stationCall || '').toUpperCase().startsWith(onCode)) ? onCode : 'DX';
-  else type = (q.call || '').toUpperCase().startsWith(onCode) ? onCode : 'DX';
+  else if (who === 'sent') type = (s.mySection || s.myProvince || isOn(s.stationCall)) ? onCode : 'DX';
+  else type = isOn(q.call) ? onCode : 'DX';
   const fields = (exchange[who] && (exchange[who][type] || exchange[who].ALL)) || [];
   return fields.map((path) => {
     let v = getPath(q, path);

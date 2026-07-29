@@ -60,6 +60,7 @@ export function makeQso(init = {}) {
     ituZone: init.ituZone ?? null,
     state: init.state ?? null,
     province: init.province ?? null,
+    section: init.section ?? null,
     iota: init.iota ?? null,
     refs: init.refs ?? {},
     qrbKm: init.qrbKm ?? null,

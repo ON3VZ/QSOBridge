@@ -4,7 +4,7 @@ import { icon } from './icons.js';
 import { processMany } from '../engine/pipeline.js';
 import { allProfiles, detectProfile } from '../engine/profiles.js';
 import { getPath } from '../engine/fieldpath.js';
-import { SERIALIZERS } from '../formats/index.js';
+import { SERIALIZERS, getSerializer } from '../formats/index.js';
 import { parseTable, guessMapping, rowsToQsos } from '../formats/tabular.js';
 import { toAdifDate, toAdifTime } from '../normalize/datetime.js';
 import { parseCty } from '../enrich/ctydat.js';
@@ -198,7 +198,9 @@ export class App {
     $('#profile').onchange = (e) => {
       this.ed.profileId = e.target.value || null;
       if (this.ed.profileId) {
-        const need = profileExportFields(this.ed.profile());
+        const prof = this.ed.profile();
+        if (prof && prof.targetFormat && getSerializer(prof.targetFormat)) { this.outFmt = prof.targetFormat; this._syncOutFmt(); }
+        const need = profileExportFields(prof);
         if (need) for (const k of need) this.ed.hiddenCols.delete(k); // vereiste kolommen tonen
         this.ed.exportFields = null; // export volgt voortaan het profiel
         this.render();
@@ -645,6 +647,7 @@ export class App {
       ${row(t('hdr.operators'), txt('hOps', s.operator))}
       ${row(t('hdr.grid') + need('myGrid'), txt('hGrid', s.myGrid, 110))}
       ${(prof && prof.id === 'iota') ? row('IOTA-eilandnaam', txt('hIsland', s.iotaIslandName, 180)) : ''}
+      ${(prof && prof.id === 'uba-dx') ? row('UBA-sectie (3 ltr / XXX)' + need('mySection'), txt('hSection', s.mySection, 90)) : ''}
       ${H(t('hdr.category'))}
       ${row(t('hdr.catop') + need('categories.operator'), sel('hCatOp', cat.operator, ['SINGLE-OP', 'MULTI-OP', 'CHECKLOG']))}
       ${row(t('hdr.catassisted') + need('categories.assisted'), sel('hCatAss', cat.assisted, ['ASSISTED', 'NON-ASSISTED']))}
@@ -669,6 +672,7 @@ export class App {
       s.operator = g('hOps') || null;
       s.myGrid = g('hGrid').toUpperCase() || null;
       const isl = dlg.querySelector('#hIsland'); if (isl) s.iotaIslandName = isl.value.trim() || null;
+      const sec = dlg.querySelector('#hSection'); if (sec) s.mySection = sec.value.trim().toUpperCase() || null;
       s.categories = {
         operator: g('hCatOp') || null, assisted: g('hCatAss') || null, power: g('hCatPow') || null,
         band: g('hCatBand') || null, mode: g('hCatMode') || null, transmitter: g('hCatTx') || null,
@@ -767,12 +771,37 @@ export class App {
     const dlg = this._dlg('Voorbeeld', body, `<button class="primary" id="pc">Sluiten</button>`);
     dlg.querySelector('#pc').onclick = () => dlg.close();
   }
-  _convert() {
+  _doConvert() {
     const out = this.outFmt;
     const res = this.ed.export(out);
     if (!res.files.length) { this._toast('Niets te exporteren'); return; }
     for (const f of res.files) downloadFile(f.name, f.content);
     this._toast(`${res.files.length} bestand(en) gedownload` + (res.warnings.length ? ` — ${res.warnings.length} waarschuwing(en)` : ''));
+  }
+
+  _convert() {
+    const prof = this.ed.profileId ? this.ed.profile() : null;
+    const total = this.ed.qsos.length;
+    const visible = this.ed.visible().length;
+    const selected = this.ed.qsos.filter((q) => q.selected).length;
+    const fmtMismatch = prof && prof.targetFormat && getSerializer(prof.targetFormat) && prof.targetFormat !== this.outFmt;
+    const selMismatch = visible < total && selected !== visible;
+    if (!fmtMismatch && !selMismatch) return this._doConvert();
+
+    const pname = prof ? ((prof.label && (prof.label[getLang()] || prof.label.nl)) || prof.id) : '';
+    let body = `<p style="margin:0 0 8px">${t('preflight.intro')}</p><ul style="margin:0 0 8px;padding-left:18px;color:var(--ink)">`;
+    if (fmtMismatch) body += `<li>${t('preflight.fmt').replace('{p}', pname).replace('{a}', prof.targetFormat.toUpperCase()).replace('{b}', this.outFmt.toUpperCase())}</li>`;
+    if (selMismatch) body += `<li>${t('preflight.sel').replace('{s}', selected).replace('{v}', visible)}</li>`;
+    body += '</ul>';
+    const dlg = this._dlg(t('preflight.title'), body,
+      `<button id="pfCancel">${t('dlg.cancel')}</button><button id="pfRaw">${t('preflight.asis')}</button><button class="primary" id="pfFix">${t('preflight.fix')}</button>`);
+    dlg.querySelector('#pfCancel').onclick = () => dlg.close();
+    dlg.querySelector('#pfRaw').onclick = () => { dlg.close(); this._doConvert(); };
+    dlg.querySelector('#pfFix').onclick = () => {
+      if (fmtMismatch) { this.outFmt = prof.targetFormat; this._syncOutFmt(); }
+      if (selMismatch) { this.ed.selectFiltered(true); }
+      dlg.close(); this.render(); this._doConvert();
+    };
   }
 
   // ---------- herstel & wizard ----------

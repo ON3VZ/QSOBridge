@@ -8,9 +8,9 @@
     "updated": "2026-07-27"
   },
   "label": {
-    "nl": "IOTA (award)",
-    "fr": "IOTA (award)",
-    "en": "IOTA (award)"
+    "nl": "IOTA-award (ADIF)",
+    "fr": "Prix IOTA (ADIF)",
+    "en": "IOTA award (ADIF)"
   },
   "targetFormat": "adif",
   "modes": [

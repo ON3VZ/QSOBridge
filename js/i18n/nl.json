@@ -214,5 +214,13 @@
     "email": "E-mail",
     "soapbox": "Soapbox",
     "save": "Bewaar"
+  },
+  "preflight": {
+    "title": "Even nakijken vóór export",
+    "intro": "Er zijn een paar dingen die je export kunnen bederven:",
+    "fmt": "Profiel \"{p}\" levert {a}, maar het doel staat op {b} — dan ontbreken de contest-velden.",
+    "sel": "{s} QSO's geselecteerd, maar slechts {v} zichtbaar (gefilterd) — zo exporteer je ook niet-gefilterde QSO's.",
+    "fix": "Corrigeer & exporteer",
+    "asis": "Toch zo exporteren"
   }
 }

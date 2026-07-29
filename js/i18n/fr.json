@@ -214,5 +214,13 @@
     "email": "Courriel",
     "soapbox": "Soapbox",
     "save": "Enregistrer"
+  },
+  "preflight": {
+    "title": "Vérification avant export",
+    "intro": "Quelques points peuvent gâcher votre export :",
+    "fmt": "Le profil « {p} » produit {a}, mais la cible est {b} — les champs de concours manqueront.",
+    "sel": "{s} QSO sélectionnés, mais seulement {v} visibles (filtrés).",
+    "fix": "Corriger & exporter",
+    "asis": "Exporter tel quel"
   }
 }

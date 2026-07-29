@@ -165,7 +165,7 @@ check('split via dialoog vult velden', app.ed.qsos[0].rstRcvd === '599' && Strin
 // Profiel toont vereiste velden als kolom, ook als de data ze niet heeft
 app.ed.profileId = 'uba-dx';
 const cols = app.columns();
-check('UBA DX: provincie-kolom aanwezig (ook al ontbreekt data)', cols.some((c) => c.key === 'province'));
+check('UBA DX: sectie-kolom aanwezig (ook al ontbreekt data)', cols.some((c) => c.key === 'section'));
 check('vereiste kolommen gemarkeerd', cols.some((c) => c.key === 'serialSent' && c.required));
 check('vereiste kolommen staan vooraan', cols[0].required === true);
 app.render();
@@ -208,6 +208,20 @@ document.querySelector('#hS').click();
 check('header opgeslagen in sessie', app.ed.session.categories.time === '24-HOURS' && app.ed.session.club === 'UBA');
 const hout = app.ed.export('cabrillo').files[0].content;
 check('Cabrillo-kop bevat ingevulde velden', /CATEGORY-TIME: 24-HOURS/.test(hout) && /CLUB: UBA/.test(hout));
+
+// Profiel stuurt automatisch het doelformaat
+const psel = document.querySelector('#profile');
+psel.value = 'iota'; psel.dispatchEvent(new dom.window.Event('change'));
+check('profiel iota -> doel cabrillo', app.outFmt === 'cabrillo');
+psel.value = 'pota'; psel.dispatchEvent(new dom.window.Event('change'));
+check('profiel pota -> doel adif', app.outFmt === 'adif');
+
+// Pre-flight: doel handmatig op mismatch zetten -> waarschuwing bij export
+app.ed.profileId = 'iota'; app.outFmt = 'adif'; app._syncOutFmt();
+app._convert();
+check('pre-flight waarschuwt bij profiel/doel-mismatch', !!document.querySelector('#pfFix'));
+document.querySelector('#pfFix').click();
+check('pre-flight corrigeert doel naar cabrillo', app.outFmt === 'cabrillo');
 
 console.log(`\n==== DOM-smoke: ${pass} geslaagd, ${fail} gefaald ====\n`);
 process.exit(fail ? 1 : 0);

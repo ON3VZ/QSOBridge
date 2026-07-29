@@ -214,5 +214,13 @@
     "email": "Email",
     "soapbox": "Soapbox",
     "save": "Save"
+  },
+  "preflight": {
+    "title": "Quick check before export",
+    "intro": "A few things may spoil your export:",
+    "fmt": "Profile \"{p}\" produces {a}, but the target is {b} — the contest fields will be missing.",
+    "sel": "{s} QSOs selected, but only {v} visible (filtered) — you'd export non-filtered QSOs too.",
+    "fix": "Fix & export",
+    "asis": "Export as is"
   }
 }
