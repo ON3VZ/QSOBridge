@@ -656,6 +656,20 @@ Fed. Rep. of Germany:     14:  28:  EU:   51.00:   -10.00:    -1.0:  DL:
   // Autosave-groottegrens: gigantische payload wordt overgeslagen
   const huge = new Ed2(Array.from({ length: 1 }, () => mk({ call: 'A', extras: { BIG: 'x'.repeat(5_000_000) } })), makeSession());
   check('autosave slaat te grote status over', st2.saveState(huge) === null);
+
+  // ---- Kolommen splitsen & samenvoegen (parse/concat) ----
+  const edC = new Ed2([mk({ call: 'A', extras: { EXCH: '599 14' } }), mk({ call: 'B', extras: { EXCH: '599 27' } })], makeSession());
+  const nS = edC.splitColumn('extras.EXCH', { separator: ' ', targets: ['rstRcvd', 'cqZone'] });
+  check('splitColumn: 2 rijen', nS === 2);
+  check('split -> rstRcvd + cqZone', edC.qsos[0].rstRcvd === '599' && edC.qsos[0].cqZone === '14');
+  // regex-variant
+  const edR = new Ed2([mk({ call: 'A', extras: { X: 'ON-0042/JO20' } })], makeSession());
+  edR.splitColumn('extras.X', { regex: '^([A-Z]+-\\d+)/([A-Z0-9]+)$', targets: ['refs.pota.mine', 'gridSquare'] });
+  check('split regex -> park + grid', edR.qsos[0].refs.pota.mine === 'ON-0042' && edR.qsos[0].gridSquare === 'JO20');
+  // merge
+  const edM = new Ed2([mk({ call: 'A', rstSent: '599', serialSent: 12 })], makeSession());
+  const nM = edM.mergeColumns(['rstSent', 'serialSent'], { separator: ' ', target: 'extras.EXCH_SENT' });
+  check('mergeColumns: samengevoegd', nM === 1 && edM.qsos[0].extras.EXCH_SENT === '599 12');
 }
 
 console.log(`\n==== ${pass} geslaagd, ${fail} gefaald ====\n`);

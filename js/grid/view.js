@@ -17,7 +17,7 @@ import { interpretPaperLog } from '../assist/paperlog.js';
 import { t, setLang, getLang, AVAILABLE } from '../i18n/index.js';
 import { Store, localAdapter, debounce } from '../engine/store.js';
 import { DESTINATIONS, resolveDestination } from '../engine/destinations.js';
-import { discoverFields, DEFAULT_VISIBLE, profileExportFields } from '../engine/fields.js';
+import { discoverFields, DEFAULT_VISIBLE, profileExportFields, columnFor } from '../engine/fields.js';
 
 // Statische mapping-doelen (voor de kolom-mapping-dialoog van tabelimport):
 const MAP_TARGETS = [
@@ -30,7 +30,7 @@ const MAP_TARGETS = [
   { key: 'refs.sota.mine', label: 'MY SOTA' }, { key: 'refs.sota.worked', label: 'SOTA' },
   { key: 'refs.wwff.mine', label: 'MY WWFF' }, { key: 'extras.COMMENT', label: 'Comment' }, { key: 'extras.NAME', label: 'Name' }
 ];
-const ROW_H = 31;
+const ROW_H = 34;
 
 // Inline logo — brugmerk (bron -> boog -> doel), past op de navy topbalk.
 const LOGO_SVG = `<svg class="logo" viewBox="0 0 512 512" aria-hidden="true">
@@ -49,6 +49,7 @@ export class App {
     this.ctyDataset = null; // geïmporteerde cty.dat (null = gebundelde tabel)
     this.refIndex = null;   // geïmporteerde referentielijst(en)
     this.onlineConsent = false;
+    this.outFmt = 'adif';   // gedeeld doelformaat (boven- en onderbalk)
     this.store = new Store(localAdapter());
     const savedKey = this.store.a.get('qsobridge:aikey');
     if (savedKey) setProvider(byokProvider({ apiKey: savedKey }));
@@ -102,12 +103,17 @@ export class App {
           <button id="enrich">${icon('globe')} ${t('tb.enrich')}</button>
           <button id="check">${icon('shield')} ${t('tb.check')}</button>
         </div>
-        <div class="group"><button id="cols">${icon('columns')} ${t('tb.cols')}</button></div>
+        <div class="group"><button id="cols">${icon('columns')} ${t('tb.cols')}</button><button id="colops">${icon('split')} ${t('tb.colops')}</button></div>
         <div class="group">
           <select id="viewSel" aria-label="${t('views.saved')}"><option value="">${t('views.saved')}</option></select>
           <button id="viewSave" title="${t('views.save')}">${icon('plus')}</button>
           <button id="viewDel" title="${t('views.delete')}">${icon('trash')}</button>
         </div>
+      </div>
+      <div class="exportbar">
+        <label style="color:var(--muted)">${t('status.export') || 'Exporteren'}</label>
+        <span class="spacer"></span>
+        ${this._exportControls()}
       </div>
       <div class="stage">
         <div class="grid-wrap" id="gridWrap">
@@ -131,12 +137,7 @@ export class App {
         <div class="readout"><span class="k">${t('status.err')}</span><span class="v err" id="sErr">0</span></div>
         <div class="readout"><span class="k">${t('status.dupe')}</span><span class="v warn" id="sDup">0</span></div>
         <span class="spacer"></span>
-        <label for="outFmt" style="color:var(--muted)">${t('status.target')}</label>
-        <select id="outFmt"></select>
-        <button id="expFields">${icon('sliders')} ${t('status.fields')}</button>
-        <button id="wizard">${icon('zap')} ${t('status.wizard')}</button>
-        <button id="preview">${icon('eye')} ${t('status.preview')}</button>
-        <button id="convert" class="primary">${icon('download')} ${t('status.convert')}</button>
+        ${this._exportControls()}
       </div>
       <dialog id="dlg"></dialog>
       <footer class="foot">
@@ -154,13 +155,26 @@ export class App {
     this.render();
   }
 
+  /** Gedeeld export-fragment (staat zowel boven als onder). Class-based i.p.v. id's. */
+  _exportControls() {
+    return `<label style="color:var(--muted)">${t('status.target')}</label>
+        <select class="js-outfmt" aria-label="${t('status.target')}"></select>
+        <button class="js-expfields">${icon('sliders')} ${t('status.fields')}</button>
+        <button class="js-wizard">${icon('zap')} ${t('status.wizard')}</button>
+        <button class="js-preview">${icon('eye')} ${t('status.preview')}</button>
+        <button class="js-convert primary">${icon('download')} ${t('status.convert')}</button>`;
+  }
+
   _fillSelects() {
     const prof = this.root.querySelector('#profile');
     for (const p of allProfiles()) prof.append(new Option(p.label.nl || p.id, p.id));
-    const out = this.root.querySelector('#outFmt');
-    for (const s of SERIALIZERS) if (s.capabilities.canSerialize && s.id !== 'custom') out.append(new Option((s.label && s.label.nl) || s.id, s.id));
-    out.value = 'adif';
+    for (const out of this.root.querySelectorAll('.js-outfmt')) {
+      for (const s of SERIALIZERS) if (s.capabilities.canSerialize && s.id !== 'custom') out.append(new Option((s.label && s.label.nl) || s.id, s.id));
+      out.value = this.outFmt;
+    }
   }
+
+  _syncOutFmt() { for (const s of this.root.querySelectorAll('.js-outfmt')) s.value = this.outFmt; }
 
   _wire() {
     const $ = (s) => this.root.querySelector(s);
@@ -171,11 +185,21 @@ export class App {
     $('#viewDel').onclick = () => this._deleteView();
     $('#viewSel').onchange = (e) => { const v = this.store.getView(e.target.value); if (v) { this.ed.applyView(v); this.render(); } };
     this._fillViews();
-    $('#wizard').onclick = () => this._wizardDialog();
+    this.root.querySelectorAll('.js-wizard').forEach((b) => b.onclick = () => this._wizardDialog());
     $('#help').onclick = () => this._helpDialog();
     $('#ai').onclick = () => this._aiDialog();
-    $('#expFields').onclick = () => this._exportFieldsDialog();
-    $('#profile').onchange = (e) => { this.ed.profileId = e.target.value || null; this.render(); };
+    this.root.querySelectorAll('.js-expfields').forEach((b) => b.onclick = () => this._exportFieldsDialog());
+    this.root.querySelectorAll('.js-outfmt').forEach((s) => s.onchange = (e) => { this.outFmt = e.target.value; this._syncOutFmt(); });
+    $('#profile').onchange = (e) => {
+      this.ed.profileId = e.target.value || null;
+      if (this.ed.profileId) {
+        const need = profileExportFields(this.ed.profile());
+        if (need) for (const k of need) this.ed.hiddenCols.delete(k); // vereiste kolommen tonen
+        this.ed.exportFields = null; // export volgt voortaan het profiel
+        this.render();
+        this._profileSummary();
+      } else this.render();
+    };
     $('#undo').onclick = () => { this.ed.undo(); this.render(); };
     $('#redo').onclick = () => { this.ed.redo(); this.render(); };
     $('#selAll').onclick = () => { this.ed.selectAll(true); this.render(); };
@@ -191,8 +215,9 @@ export class App {
     $('#bulk').onclick = () => this._bulkDialog();
     $('#repl').onclick = () => this._replaceDialog();
     $('#cols').onclick = () => this._colsDialog();
-    $('#preview').onclick = () => this._previewDialog();
-    $('#convert').onclick = () => this._convert();
+    $('#colops').onclick = () => this._colOpsDialog();
+    this.root.querySelectorAll('.js-preview').forEach((b) => b.onclick = () => this._previewDialog());
+    this.root.querySelectorAll('.js-convert').forEach((b) => b.onclick = () => this._convert());
     for (const [id, key] of [['#fCall', 'call'], ['#fBand', 'band'], ['#fMode', 'mode']]) {
       $(id).oninput = (e) => { this.ed.setFilter({ [key]: e.target.value }); this.render(); };
     }
@@ -261,7 +286,7 @@ export class App {
   }
   _apply(res) {
     this.ed = new QsoEditor(res.qsos, res.session || {});
-    this.ed.hiddenCols = new Set(discoverFields(this.ed.qsos).map((c) => c.key).filter((k) => !DEFAULT_VISIBLE.includes(k)));
+    this.ed.hiddenCols = new Set(); // toon standaard alle aanwezige kolommen
     // Auto-profiel
     const p = detectProfile(this.ed.session);
     if (p) { this.ed.profileId = p.id; this.root.querySelector('#profile').value = p.id; }
@@ -278,10 +303,18 @@ export class App {
   /** Dynamische kolommen uit de geladen data (variabel per bestand). */
   columns() {
     const cols = discoverFields(this.ed.qsos);
-    if (!cols.length) return MAP_TARGETS.slice(0, 9).map((c) => ({ ...c, mono: true }));
-    // date/time koppelen aan de 'datetime'-issue voor de rode rand.
-    for (const c of cols) if (c.key === 'date' || c.key === 'time') c.issue = 'datetime';
-    return cols;
+    const base = cols.length ? cols : MAP_TARGETS.slice(0, 9).map((c) => ({ ...c, mono: true }));
+    for (const c of base) if (c.key === 'date' || c.key === 'time') c.issue = 'datetime';
+    const prof = this.ed.profileId ? this.ed.profile() : null;
+    if (!prof) return base;
+    // Vereiste velden van het profiel: toon ze als kolom, ook als de data ze nog niet heeft.
+    const need = profileExportFields(prof) || new Set();
+    const haveKeys = new Set(base.map((c) => c.key));
+    const missing = [...need].filter((k) => !haveKeys.has(k)).map((k) => columnFor(k));
+    const all = [...base, ...missing];
+    for (const c of all) if (need.has(c.key)) c.required = true;
+    // Nodige velden vooraan, de rest erna.
+    return [...all.filter((c) => c.required), ...all.filter((c) => !c.required)];
   }
 
   render() {
@@ -297,7 +330,7 @@ export class App {
     const cols = this.columns().filter((c) => !this.ed.hiddenCols.has(c.key));
     host.innerHTML = `<table class="log" role="grid"><thead><tr role="row">
       <th class="rownum" scope="col">#</th><th class="sel" scope="col"><input type="checkbox" id="thSel" aria-label="selecteer alle gefilterde"></th>
-      ${cols.map((c) => `<th data-k="${c.key}" role="columnheader" scope="col" aria-sort="${this.ed.sort.path === c.key ? (this.ed.sort.dir > 0 ? 'ascending' : 'descending') : 'none'}">${c.label} <span class="arrow">${this.ed.sort.path === c.key ? (this.ed.sort.dir > 0 ? '▲' : '▼') : ''}</span></th>`).join('')}
+      ${cols.map((c) => `<th data-k="${c.key}"${c.required ? ' class="req"' : ''} role="columnheader" scope="col" aria-sort="${this.ed.sort.path === c.key ? (this.ed.sort.dir > 0 ? 'ascending' : 'descending') : 'none'}">${c.label}${c.required ? ' <span class="reqdot" title="verplicht">•</span>' : ''} <span class="arrow">${this.ed.sort.path === c.key ? (this.ed.sort.dir > 0 ? '▲' : '▼') : ''}</span></th>`).join('')}
     </tr></thead><tbody id="tbody"></tbody></table>`;
     host.querySelector('#thSel').onclick = (e) => { this.ed.selectFiltered(e.target.checked); this.render(); };
     host.querySelectorAll('th[data-k]').forEach((th) => th.onclick = () => { this.ed.setSort(th.dataset.k); this.render(); });
@@ -320,9 +353,10 @@ export class App {
     const count = Math.ceil(viewH / ROW_H) + 12;
     const last = Math.min(total, first + count);
     const cols = this._cols;
+    const ncol = cols.length + 2; // rownum + selectie
 
     let html = '';
-    if (first > 0) html += `<tr style="height:${first * ROW_H}px"></tr>`;
+    if (first > 0) html += `<tr aria-hidden="true"><td colspan="${ncol}" style="height:${first * ROW_H}px;padding:0;border:0"></td></tr>`;
     for (let i = first; i < last; i++) {
       const q = rows[i];
       const issues = report.qsoIssues[q.id] || {};
@@ -332,7 +366,7 @@ export class App {
         <td class="sel"><input type="checkbox" data-sel ${q.selected ? 'checked' : ''}></td>
         ${cols.map((c) => this._cell(q, c, issues)).join('')}</tr>`;
     }
-    if (last < total) html += `<tr style="height:${(total - last) * ROW_H}px"></tr>`;
+    if (last < total) html += `<tr aria-hidden="true"><td colspan="${ncol}" style="height:${(total - last) * ROW_H}px;padding:0;border:0"></td></tr>`;
     tbody.innerHTML = html;
 
     tbody.querySelectorAll('input[data-sel]').forEach((cb) => cb.onchange = (e) => {
@@ -525,6 +559,18 @@ export class App {
     this._fillViews();
   }
 
+  _profileSummary() {
+    const prof = this.ed.profile();
+    if (!prof || prof.id === '_default') return;
+    const rep = this.ed.report();
+    const missing = new Set();
+    for (const iss of Object.values(rep.qsoIssues)) for (const [f, v] of Object.entries(iss)) if (v.code === 'REQUIRED' || v.code === 'EXCHANGE') missing.add(f);
+    for (const [f, v] of Object.entries(rep.headerIssues)) if (v.code === 'REQUIRED') missing.add(f);
+    const name = (prof.label && (prof.label[getLang()] || prof.label.nl)) || prof.id;
+    if (missing.size) this._toast(`${name} — nog nodig: ${[...missing].join(', ')}`);
+    else this._toast(`${name} — alle verplichte velden aanwezig ✓`);
+  }
+
   _jump() {
     const id = this.ed.nextError(this.focusCell && this.focusCell.id);
     if (!id) { this._toast('Geen fouten meer'); return; }
@@ -567,6 +613,50 @@ export class App {
       dlg.close(); this.render(); this._toast(`${n} vervanging(en)`);
     };
   }
+  _colOpsDialog() {
+    const cols = this.columns();
+    const srcOpts = cols.map((c) => `<option value="${c.key}">${escapeAttr(c.label)}</option>`).join('');
+    const mgOpts = `<option value="">—</option>` + srcOpts;
+    const tgtList = [...new Set([...MAP_TARGETS.map((c) => c.key), ...cols.map((c) => c.key)])];
+    const datalist = `<datalist id="tgtFields">${tgtList.map((k) => `<option value="${k}"></option>`).join('')}</datalist>`;
+    const H = (s) => `<h3 style="color:var(--amber);font-size:13px;margin:12px 0 6px">${s}</h3>`;
+    const body = `${datalist}
+      <p style="color:var(--muted);font-size:12px">${t('colops.hint')}</p>
+      ${H(t('colops.splitTitle'))}
+      <div class="map-row"><label>${t('colops.source')}</label><select id="spSrc">${srcOpts}</select></div>
+      <div class="map-row"><label>${t('colops.sep')}</label><span><input id="spSep" value=" " style="width:70px"> &nbsp;<label style="font-size:12px"><input type="checkbox" id="spRegexOn"> ${t('colops.regex')}</label></span></div>
+      <div class="map-row" id="spRegexRow" style="display:none"><label>Regex</label><input id="spRegex" placeholder="^(\\d{3})\\s+(\\d+)$"></div>
+      <div class="map-row"><label>${t('colops.targets')}</label><span><input list="tgtFields" id="spT0" placeholder="veld 1" style="width:105px"> <input list="tgtFields" id="spT1" placeholder="veld 2" style="width:105px"> <input list="tgtFields" id="spT2" placeholder="veld 3" style="width:105px"></span></div>
+      <button class="primary" id="spGo">${icon('split')} ${t('colops.split')}</button>
+      <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+      ${H(t('colops.mergeTitle'))}
+      <div class="map-row"><label>${t('colops.sources')}</label><span><select id="mgS0">${mgOpts}</select> <select id="mgS1">${mgOpts}</select> <select id="mgS2">${mgOpts}</select></span></div>
+      <div class="map-row"><label>${t('colops.sep')}</label><input id="mgSep" value=" " style="width:70px"></div>
+      <div class="map-row"><label>${t('colops.target')}</label><input list="tgtFields" id="mgT" placeholder="doelveld"></div>
+      <button class="primary" id="mgGo">${icon('split')} ${t('colops.merge')}</button>`;
+    const dlg = this._dlg(t('colops.title'), body, `<button id="coC">${t('dlg.close')}</button>`);
+    dlg.querySelector('#coC').onclick = () => dlg.close();
+    dlg.querySelector('#spRegexOn').onchange = (e) => { dlg.querySelector('#spRegexRow').style.display = e.target.checked ? '' : 'none'; };
+    dlg.querySelector('#spGo').onclick = () => {
+      const targets = ['spT0', 'spT1', 'spT2'].map((id) => dlg.querySelector('#' + id).value.trim() || null);
+      if (!targets.some(Boolean)) return;
+      const regexOn = dlg.querySelector('#spRegexOn').checked;
+      const n = this.ed.splitColumn(dlg.querySelector('#spSrc').value, {
+        separator: dlg.querySelector('#spSep').value,
+        regex: regexOn ? dlg.querySelector('#spRegex').value : null,
+        targets
+      });
+      this.render(); this._toast(`${n} ${t('colops.split').toLowerCase()}`);
+    };
+    dlg.querySelector('#mgGo').onclick = () => {
+      const sources = ['mgS0', 'mgS1', 'mgS2'].map((id) => dlg.querySelector('#' + id).value).filter(Boolean);
+      const target = dlg.querySelector('#mgT').value.trim();
+      if (!target || !sources.length) return;
+      const n = this.ed.mergeColumns(sources, { separator: dlg.querySelector('#mgSep').value, target });
+      this.render(); this._toast(`${n} ${t('colops.merge').toLowerCase()}`);
+    };
+  }
+
   _colsDialog() {
     const dlg = this._dlg(t('tb.cols'),
       this.columns().map((c) => `<label style="display:block;padding:4px 0"><input type="checkbox" data-c="${c.key}" ${this.ed.hiddenCols.has(c.key) ? '' : 'checked'}> ${c.label}${c.source === 'extra' ? ' <span style="color:var(--muted)">(extra)</span>' : ''}</label>`).join(''),
@@ -595,7 +685,7 @@ export class App {
     };
   }
   _previewDialog() {
-    const out = this.root.querySelector('#outFmt').value;
+    const out = this.outFmt;
     const res = this.ed.export(out);
     const f = res.files[0];
     const warn = res.warnings.length ? `<div class="warnbar">${res.warnings.map((w) => escapeAttr(w.reason)).join('<br>')}</div>` : '';
@@ -605,7 +695,7 @@ export class App {
     dlg.querySelector('#pc').onclick = () => dlg.close();
   }
   _convert() {
-    const out = this.root.querySelector('#outFmt').value;
+    const out = this.outFmt;
     const res = this.ed.export(out);
     if (!res.files.length) { this._toast('Niets te exporteren'); return; }
     for (const f of res.files) downloadFile(f.name, f.content);
@@ -624,7 +714,7 @@ export class App {
     dlg.querySelector('#rr').onclick = () => {
       this.ed = new QsoEditor(st.qsos, st.session || {});
       this.ed.profileId = st.profileId || null;
-      this.ed.hiddenCols = new Set(discoverFields(this.ed.qsos).map((c) => c.key).filter((k) => !DEFAULT_VISIBLE.includes(k)));
+      this.ed.hiddenCols = new Set(); // toon standaard alle aanwezige kolommen
       if (st.profileId) this.root.querySelector('#profile').value = st.profileId;
       if (this.ed.session.stationCall) this.root.querySelector('#brandCall').textContent = this.ed.session.stationCall;
       dlg.close(); this._refreshFilters(); this.render();
@@ -678,7 +768,7 @@ export class App {
       const sel = dlg.querySelector('input[name=dest]:checked');
       if (!sel) { dlg.close(); return; }
       const r = resolveDestination(sel.value, this.ed.profileId, lang);
-      this.root.querySelector('#outFmt').value = r.formatId;
+      this.outFmt = r.formatId; this._syncOutFmt();
       if (r.profileId) { this.ed.profileId = r.profileId; this.root.querySelector('#profile').value = r.profileId; }
       // Exportvelden volgen de bestemming (POTA/WWFF/SOTA/contest ...).
       this.ed.exportFields = r.profileId ? profileExportFields(this.ed.profile()) : null;

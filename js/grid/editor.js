@@ -145,6 +145,52 @@ export class QsoEditor {
     return this.qsos.filter((q) => set.has(q.id));
   }
 
+  /**
+   * Splitst één kolom in meerdere velden (parse). bv. "599 14" -> rstRcvd + cqZone.
+   * @param {string} sourceKey  veldpad van de bronkolom
+   * @param {{separator?:string, regex?:string, targets:string[], scope?:string}} opts
+   *   targets: doelveldpaden per stuk (leeg = overslaan). regex met capture-groepen heeft voorrang.
+   * @returns {number} aantal gewijzigde rijen
+   */
+  splitColumn(sourceKey, opts) {
+    this._snapshot();
+    const targets = opts.targets || [];
+    const re = opts.regex ? new RegExp(opts.regex) : null;
+    let n = 0;
+    for (const q of this._scopeRows(opts.scope || 'all')) {
+      const raw = getPath(q, sourceKey);
+      if (raw == null || raw === '') continue;
+      let parts;
+      if (re) { const m = String(raw).match(re); parts = m ? m.slice(1) : []; }
+      else parts = String(raw).split(opts.separator === '' ? '' : (opts.separator || ' ')).filter((x) => x !== '');
+      let changed = false;
+      targets.forEach((tgt, i) => {
+        if (tgt && parts[i] != null) { setPath(q, tgt, String(parts[i]).trim()); changed = true; }
+      });
+      if (changed) n++;
+    }
+    return n;
+  }
+
+  /**
+   * Voegt meerdere kolommen samen tot één veld (concatenate). bv. serial + zone -> exchange.
+   * @param {string[]} sourceKeys  bronveldpaden
+   * @param {{separator?:string, target:string, scope?:string}} opts
+   * @returns {number} aantal gewijzigde rijen
+   */
+  mergeColumns(sourceKeys, opts) {
+    this._snapshot();
+    const sep = opts.separator == null ? ' ' : opts.separator;
+    let n = 0;
+    for (const q of this._scopeRows(opts.scope || 'all')) {
+      const vals = sourceKeys.map((k) => getPath(q, k)).filter((v) => v != null && v !== '');
+      if (!vals.length) continue;
+      setPath(q, opts.target, vals.join(sep));
+      n++;
+    }
+    return n;
+  }
+
   // ---- validatie, dupes, stats ----
   report() { if (!this._report) this._report = validateQsos(this.qsos, this.session, this.profile()); return this._report; }
   runDupes() { return markDupes(this.qsos, this.dupeOpts); }

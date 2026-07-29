@@ -15,6 +15,15 @@ const CORE = [
   ['refs.wwff.mine', 'MY WWFF', true], ['refs.wwff.worked', 'WWFF', true]
 ];
 const CORE_KEYS = new Set(CORE.map((c) => c[0]));
+const LABELS = Object.fromEntries(CORE.map((c) => [c[0], c[1]]));
+
+/** Maakt een kolomdefinitie voor een veldsleutel (ook als de data die kolom nog niet heeft). */
+export function columnFor(key) {
+  const label = LABELS[key] || key.replace(/^extras\./, '').replace(/^refs\./, '').replace('.', ' ');
+  const col = { key, label, mono: true, source: key.startsWith('extras.') ? 'extra' : 'core' };
+  if (key === 'date' || key === 'time') col.issue = 'datetime';
+  return col;
+}
 
 /** Standaard zichtbare kern (de rest van de ontdekte velden is standaard verborgen). */
 export const DEFAULT_VISIBLE = ['call', 'date', 'time', 'band', 'mode', 'rstSent', 'rstRcvd', 'serialRcvd', 'gridSquare'];

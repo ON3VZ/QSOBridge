@@ -72,6 +72,15 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .toolbar .group:last-child { border-right: 0; }
 .toolbar input[type=search] { width: 120px; }
 
+/* Bovenste exportbalk (spiegelt de onderste) */
+.exportbar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  padding: 8px 16px; background: var(--navy-900);
+  border-bottom: 1px solid var(--line); border-top: 1px solid var(--line);
+}
+.exportbar > label { font-weight: 600; letter-spacing: .3px; color: var(--amber) !important; }
+.exportbar .spacer { flex: 1; }
+
 /* ---- Layout ---- */
 .stage { flex: 1; display: flex; min-height: 0; }
 .grid-wrap { flex: 1; overflow: auto; position: relative; }
@@ -89,6 +98,8 @@ table.log { border-collapse: collapse; width: 100%; font-size: 13px; }
   font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
 }
 .log thead th .arrow { color: var(--amber); font-size: 10px; }
+.log thead th.req { border-bottom-color: var(--amber); }
+.log thead th .reqdot { color: var(--amber); font-size: 14px; vertical-align: middle; }
 .log tbody td { padding: 0; border-bottom: 1px solid var(--line); border-right: 1px solid var(--navy-700); }
 .log tbody tr:nth-child(even) { background: var(--navy-800); }
 .log tbody tr.dupe { background: rgba(255, 176, 0, .08); }

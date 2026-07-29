@@ -15,6 +15,9 @@ global.URL = dom.window.URL;
 // dialog.showModal ontbreekt in jsdom -> stub zodat dialogen niet crashen
 dom.window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
 dom.window.HTMLDialogElement.prototype.close = function () { this.open = false; };
+dom.window.URL.createObjectURL = () => 'blob:mock';
+dom.window.URL.revokeObjectURL = () => {};
+dom.window.HTMLAnchorElement.prototype.click = function () {};
 
 let pass = 0, fail = 0;
 const check = (n, c, d = '') => c ? (pass++, console.log('  \u2713 ' + n)) : (fail++, console.log('  \u2717 ' + n + ' ' + d));
@@ -65,7 +68,7 @@ check('kolomdialoog lijst velden', (() => { app._colsDialog(); return /Call/.tes
 // Taalwissel herbouwt UI in het Engels
 const langSel = document.querySelector('#lang');
 langSel.value = 'en'; langSel.dispatchEvent(new dom.window.Event('change'));
-check('taalwissel -> Engelse convert-knop', document.querySelector('#convert').textContent.trim() === 'Convert & download', `(${document.querySelector('#convert').textContent})`);
+check('taalwissel -> Engelse convert-knop', document.querySelector('.js-convert').textContent.trim() === 'Convert & download', `(${document.querySelector('.js-convert').textContent})`);
 
 // Autosave schreef naar (jsdom) localStorage
 check('autosave bewaarde status', app.store.hasState());
@@ -131,6 +134,55 @@ check('views-select aanwezig', !!document.querySelector('#viewSel'));
 // ongeldige cel krijgt aria-invalid (verplicht veld leeggemaakt)
 app.ed.profileId = 'pota'; app.ed.qsos[0].band = null; app.ed.filters = { band: '', mode: '', call: '', onlyMissing: false, onlyDupes: false }; app.render();
 check('ongeldige cel heeft aria-invalid', !!document.querySelector('input.cell[aria-invalid="true"]'));
+
+// Virtualisatie: veel rijen -> spacer met echte hoogte + slechts een venster in de DOM
+const { QsoEditor: EdV } = await import('../js/grid/editor.js');
+const { makeQso: mkV } = await import('../js/model/qso.js');
+const many = Array.from({ length: 200 }, (_, i) => mkV({ call: `T${i}ABC`, band: '20m', mode: 'CW', datetime: '2026-07-26T14:00:00Z' }));
+app.ed = new EdV(many, app.ed.session);
+app.render();
+const dataRows = document.querySelectorAll('#tbody tr[data-id]').length;
+check('virtualisatie rendert een venster (< alle rijen)', dataRows > 0 && dataRows < 200, `(${dataRows})`);
+const spacer = document.querySelector('#tbody td[colspan]');
+check('spacer-cel heeft hoogte (scrollbaar)', !!spacer && /height:\s*\d+px/.test(spacer.getAttribute('style')), `(${spacer && spacer.getAttribute('style')})`);
+
+// Kolommen: na laden zijn alle aanwezige kolommen zichtbaar (geen verborgen kern)
+app._loadText(adi, 'sample2.adi');
+check('alle aanwezige kolommen zichtbaar na laden', app.ed.hiddenCols.size === 0);
+
+// Splitsen/samenvoegen-dialoog werkt end-to-end
+app.ed.qsos[0].extras = Object.assign({}, app.ed.qsos[0].extras, { EXCH: '599 14' });
+app._colOpsDialog();
+check('colops-dialoog geopend', !!document.querySelector('#spSrc') && !!document.querySelector('#mgT'));
+// stel split in op extras.EXCH -> rstRcvd + cqZone
+const spSrc = document.querySelector('#spSrc');
+[...spSrc.options].forEach((o) => { if (o.value === 'extras.EXCH') spSrc.value = 'extras.EXCH'; });
+document.querySelector('#spT0').value = 'rstRcvd';
+document.querySelector('#spT1').value = 'cqZone';
+document.querySelector('#spGo').onclick();
+check('split via dialoog vult velden', app.ed.qsos[0].rstRcvd === '599' && String(app.ed.qsos[0].cqZone) === '14', `(${app.ed.qsos[0].rstRcvd}/${app.ed.qsos[0].cqZone})`);
+
+// Profiel toont vereiste velden als kolom, ook als de data ze niet heeft
+app.ed.profileId = 'uba-dx';
+const cols = app.columns();
+check('UBA DX: provincie-kolom aanwezig (ook al ontbreekt data)', cols.some((c) => c.key === 'province'));
+check('vereiste kolommen gemarkeerd', cols.some((c) => c.key === 'serialSent' && c.required));
+check('vereiste kolommen staan vooraan', cols[0].required === true);
+app.render();
+const reqHeader = document.querySelector('.log thead th.req');
+check('kolomkop toont verplicht-markering', !!reqHeader && /•/.test(reqHeader.textContent));
+// de lege verplichte provincie-cel is rood (aria-invalid)
+check('ontbrekend verplicht veld is aria-invalid', !!document.querySelector('td.invalid input[aria-invalid="true"]'));
+
+// Export-controls staan boven én onder en zijn gesynchroniseerd
+const outfmts = document.querySelectorAll('.js-outfmt');
+const converts = document.querySelectorAll('.js-convert');
+check('export-doel boven én onder', outfmts.length === 2);
+check('converteer-knop boven én onder', converts.length === 2);
+outfmts[0].value = 'adx'; outfmts[0].dispatchEvent(new dom.window.Event('change'));
+check('doelformaat gesynchroniseerd', outfmts[1].value === 'adx' && app.outFmt === 'adx');
+converts[0].click();
+check('converteer werkt vanaf bovenbalk', true);
 
 console.log(`\n==== DOM-smoke: ${pass} geslaagd, ${fail} gefaald ====\n`);
 process.exit(fail ? 1 : 0);
