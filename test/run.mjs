@@ -686,6 +686,14 @@ Fed. Rep. of Germany:     14:  28:  EU:   51.00:   -10.00:    -1.0:  DL:
   const iotaCab = cabMod.serialize({ qsos: p2.qsos, session: p2.session, profile: gp2('iota') });
   const qline = iotaCab.files[0].content.split('\n').find((l) => l.startsWith('QSO:'));
   check('IOTA: kop bevat CALLSIGN', /CALLSIGN: ON3VZ/.test(iotaCab.files[0].content));
+  check('IOTA: CONTEST-tag = RSGB-IOTA (reglement)', /CONTEST: RSGB-IOTA/.test(iotaCab.files[0].content));
+  // Eilandstation: IOTA-ISLAND-NAME in de kop
+  const islSess = { ...p2.session, myIota: 'EU-005', iotaIslandName: 'Isle of Wight' };
+  const islCab = cabMod.serialize({ qsos: p2.qsos, session: islSess, profile: gp2('iota') }).files[0].content;
+  check('IOTA: IOTA-ISLAND-NAME voor eilandstation', /IOTA-ISLAND-NAME: Isle of Wight/.test(islCab));
+  // Frequentie-terugval naar bandcenter als freq ontbreekt
+  const noFreq = cabMod.serialize({ qsos: [mk({ call: 'A', datetime: '2026-07-25T15:00:00Z', band: '20m', mode: 'SSB', rstSent: '59', rstRcvd: '59', serialSent: 1 })], session: p2.session, profile: gp2('iota') }).files[0].content;
+  check('freq-terugval naar bandcenter (20m -> 14000)', /QSO: 14000 /.test(noFreq));
   check('IOTA: verzonden ref = ------ (geen eiland)', /59 1 ------ II3Y/.test(qline), `(${qline})`);
   check('IOTA: ontvangen ref = EU-130', /II3Y 59 384 EU-130/.test(qline), `(${qline})`);
 

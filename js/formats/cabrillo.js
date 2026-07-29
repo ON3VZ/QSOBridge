@@ -162,6 +162,7 @@ export function serialize({ qsos, session, profile } = {}) {
   if (s.name) out.push(`NAME: ${s.name}`);
   if (Array.isArray(s.address)) for (const l of s.address) if (l) out.push(`ADDRESS: ${l}`);
   if (s.email) out.push(`EMAIL: ${s.email}`);
+  if (s.iotaIslandName) out.push(`IOTA-ISLAND-NAME: ${s.iotaIslandName}`);
   if (s.myGrid) out.push(`GRID-LOCATOR: ${s.myGrid}`);
   if (s.operator) out.push(`OPERATORS: ${s.operator}`);
   if (s.soapbox) for (const l of String(s.soapbox).split('\n')) out.push(`SOAPBOX: ${l}`);
@@ -175,7 +176,9 @@ export function serialize({ qsos, session, profile } = {}) {
 }
 
 function qsoLine(q, s, profile) {
-  const freq = q.freqMHz != null ? mhzToKhz(q.freqMHz) : '';
+  const BANDKHZ = { '160m': 1800, '80m': 3500, '60m': 5351, '40m': 7000, '30m': 10100, '20m': 14000, '17m': 18068, '15m': 21000, '12m': 24890, '10m': 28000, '6m': 50000, '2m': 144000, '70cm': 432000 };
+  let freq = q.freqMHz != null ? mhzToKhz(q.freqMHz) : '';
+  if (freq === '' && q.band && BANDKHZ[String(q.band).toLowerCase()]) freq = BANDKHZ[String(q.band).toLowerCase()];
   const mode = toCabrilloMode(q.mode);
   const date = q.datetime ? cabDate(q.datetime) : '';
   const time = q.datetime ? cabTime(q.datetime) : '';

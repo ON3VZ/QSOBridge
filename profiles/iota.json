@@ -5,7 +5,7 @@
   "meta": { "author": "QSObridge", "source": "rsgbcc.org", "updated": "2026-07-27" },
   "label": { "nl": "RSGB IOTA", "fr": "RSGB IOTA", "en": "RSGB IOTA" },
   "targetFormat": "cabrillo",
-  "contestTag": { "CW": "IOTA", "SSB": "IOTA" },
+  "contestTag": { "CW": "RSGB-IOTA", "SSB": "RSGB-IOTA" },
   "modes": ["CW", "SSB"],
   "requiredQsoFields": ["call", "datetime", "band", "mode", "rstSent", "rstRcvd", "serialSent"],
   "header": { "required": ["stationCall", "categories.time"], "optional": ["categories.overlay"] },

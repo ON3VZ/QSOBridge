@@ -644,6 +644,7 @@ export class App {
       ${row(t('hdr.call') + need('stationCall'), txt('hCall', s.stationCall))}
       ${row(t('hdr.operators'), txt('hOps', s.operator))}
       ${row(t('hdr.grid') + need('myGrid'), txt('hGrid', s.myGrid, 110))}
+      ${(prof && prof.id === 'iota') ? row('IOTA-eilandnaam', txt('hIsland', s.iotaIslandName, 180)) : ''}
       ${H(t('hdr.category'))}
       ${row(t('hdr.catop') + need('categories.operator'), sel('hCatOp', cat.operator, ['SINGLE-OP', 'MULTI-OP', 'CHECKLOG']))}
       ${row(t('hdr.catassisted') + need('categories.assisted'), sel('hCatAss', cat.assisted, ['ASSISTED', 'NON-ASSISTED']))}
@@ -667,6 +668,7 @@ export class App {
       s.stationCall = g('hCall') || null;
       s.operator = g('hOps') || null;
       s.myGrid = g('hGrid').toUpperCase() || null;
+      const isl = dlg.querySelector('#hIsland'); if (isl) s.iotaIslandName = isl.value.trim() || null;
       s.categories = {
         operator: g('hCatOp') || null, assisted: g('hCatAss') || null, power: g('hCatPow') || null,
         band: g('hCatBand') || null, mode: g('hCatMode') || null, transmitter: g('hCatTx') || null,
