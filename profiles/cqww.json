@@ -2,20 +2,69 @@
   "$schema": "qsobridge-profile/v1",
   "id": "cqww",
   "schemaVersion": "1.0",
-  "meta": { "author": "QSObridge", "source": "cqww.com", "updated": "2026-07-27" },
-  "label": { "nl": "CQ WW DX", "fr": "CQ WW DX", "en": "CQ WW DX" },
+  "meta": {
+    "author": "QSObridge",
+    "source": "cqww.com",
+    "updated": "2026-07-27"
+  },
+  "label": {
+    "nl": "CQ WW DX",
+    "fr": "CQ WW DX",
+    "en": "CQ WW DX"
+  },
   "targetFormat": "cabrillo",
-  "contestTag": { "CW": "CQ-WW-CW", "SSB": "CQ-WW-SSB" },
-  "modes": ["CW", "SSB"],
-  "requiredQsoFields": ["call", "datetime", "band", "mode", "rstSent", "rstRcvd", "cqZone"],
-  "header": { "required": ["stationCall", "myCqZone"], "optional": ["club"] },
+  "contestTag": {
+    "CW": "CQ-WW-CW",
+    "SSB": "CQ-WW-SSB"
+  },
+  "modes": [
+    "CW",
+    "SSB"
+  ],
+  "requiredQsoFields": [
+    "call",
+    "datetime",
+    "band",
+    "mode",
+    "rstSent",
+    "rstRcvd",
+    "cqZone"
+  ],
+  "header": {
+    "required": [
+      "stationCall",
+      "myCqZone",
+      "location"
+    ],
+    "optional": [
+      "club"
+    ]
+  },
   "exchange": {
-    "stationType": { "field": "none", "on": "ALL" },
-    "sent": { "ALL": ["rstSent", "myCqZone"] },
-    "rcvd": { "ALL": ["rstRcvd", "cqZone"] }
+    "stationType": {
+      "field": "none",
+      "on": "ALL"
+    },
+    "sent": {
+      "ALL": [
+        "rstSent",
+        "myCqZone"
+      ]
+    },
+    "rcvd": {
+      "ALL": [
+        "rstRcvd",
+        "cqZone"
+      ]
+    }
   },
   "validation": {
-    "cqZone": { "type": "int", "min": 1, "max": 40, "required": true }
+    "cqZone": {
+      "type": "int",
+      "min": 1,
+      "max": 40,
+      "required": true
+    }
   },
   "filenamePattern": "{stationCall}.cbr",
   "notes": {

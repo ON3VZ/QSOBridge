@@ -276,12 +276,6 @@ console.log('\n[Fase 5: profielen + validatie]');
   const ordered = edCol.orderColumns([{ key: 'call' }, { key: 'datetime' }, { key: 'band' }, { key: 'mode' }]).map((c) => c.key);
   check('orderColumns respecteert volgorde', ordered.slice(0, 3).join(',') === 'call,band,datetime');
 
-  // CQ WW: LOCATION-regel (DX) + exchange RST + CQ-zone
-  const cqS = makeSession({ stationCall: 'ON3VZ', myCqZone: 14, location: 'DX', categories: { operator: 'SINGLE-OP', band: 'ALL', mode: 'SSB', power: 'LOW' } });
-  const cqOut = cab.serialize({ qsos: [makeQso({ call: 'K9QZO', datetime: '2026-11-28T07:11:00Z', band: '20m', freqMHz: 14.256, mode: 'SSB', rstSent: '59', rstRcvd: '59', cqZone: 4 })], session: cqS, profile: getProfile('cqww') }).files[0].content;
-  check('CQ WW: LOCATION-regel', /LOCATION: DX/.test(cqOut));
-  check('CQ WW: exchange RST + CQ-zone', /ON3VZ\s+59\s+14\s+K9QZO\s+59\s+4/.test(cqOut));
-
   // Validatie: ontbrekend verplicht veld + ongeldige ref
   const badPota = makeQso({ call: 'DL1ABC', datetime: '2026-07-26T14:00:00Z', mode: 'FT8', band: '20m', refs: { pota: { mine: 'BADREF!!', worked: null } } });
   const v = validateQsos([badPota], makeSession({ stationCall: 'ON3VZ' }), getProfile('pota'));

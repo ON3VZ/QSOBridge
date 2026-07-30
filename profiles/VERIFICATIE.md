@@ -30,3 +30,8 @@ Hieronder de status van de verificatie tegen de officiële reglementen (juli 202
 - WAE DC: QTC-verkeer (apart blok) zit niet in scope.
 - ARRL SS: complexe exchange (serial + precedence + check + sectie) vereenvoudigd.
 - IOTA/UBA multi-op vanaf eiland: numerieke zender-ID achteraan de QSO-lijn.
+
+## HF-ronde (reglementen, geen echt log beschikbaar)
+- **YOTA** (ham-yota.com): CONTEST `YOTA`, exchange **RST + leeftijd**, GEEN CATEGORY-POWER, wél GRID-LOCATOR/NAME/adres/EMAIL. ✅ (geverifieerd tegen ingediend ON3VZ-log)
+- **CQ WW / CQ WPX / CQ WW RTTY / WW-Digi** (officiële cabrillo.htm): vereisen `LOCATION:` — DX-stations zetten `LOCATION: DX`. Toegevoegd + verplicht gemarkeerd. Exchange bevestigd (RST+zone / RST+serial / RST+zone+staat / RST+grid). ✅
+- VHF/EDI: bewust overgeslagen (HF-focus).

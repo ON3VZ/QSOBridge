@@ -31,7 +31,8 @@
   "header": {
     "required": [
       "stationCall",
-      "myCqZone"
+      "myCqZone",
+      "location"
     ],
     "optional": []
   },

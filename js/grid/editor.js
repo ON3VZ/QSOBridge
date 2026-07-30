@@ -22,6 +22,7 @@ export class QsoEditor {
     this.filters = { band: '', mode: '', call: '', contest: '', dateFrom: '', dateTo: '', onlyMissing: false, onlyDupes: false };
     this.sort = { path: null, dir: 1 };
     this.hiddenCols = new Set();
+    this.colOrder = []; // door de gebruiker gekozen kolomvolgorde (sleutels)
     this.dupeOpts = { fields: ['call', 'band', 'mode'] };
     this.exportFields = null; // null = alle velden; anders een Set van veldsleutels
     this._history = [];
@@ -63,6 +64,22 @@ export class QsoEditor {
   }
 
   /** Huidige weergave (filters + sortering + verborgen kolommen) vastleggen. */
+  /** Sorteert een kolomlijst volgens de gekozen colOrder (rest behoudt bestaande volgorde). */
+  orderColumns(cols) {
+    if (!this.colOrder.length) return cols;
+    const rank = new Map(this.colOrder.map((k, i) => [k, i]));
+    return [...cols].sort((a, b) => (rank.has(a.key) ? rank.get(a.key) : Infinity) - (rank.has(b.key) ? rank.get(b.key) : Infinity));
+  }
+
+  /** Verplaatst een kolom omhoog (-1) of omlaag (+1) in de gegeven volgorde. */
+  moveColumnKey(orderedKeys, key, dir) {
+    const keys = [...orderedKeys];
+    const i = keys.indexOf(key), j = i + dir;
+    if (i < 0 || j < 0 || j >= keys.length) return;
+    [keys[i], keys[j]] = [keys[j], keys[i]];
+    this.colOrder = keys;
+  }
+
   captureView() {
     return { filters: { ...this.filters }, sort: { ...this.sort }, hiddenCols: [...this.hiddenCols] };
   }

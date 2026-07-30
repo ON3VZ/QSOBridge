@@ -7,6 +7,7 @@ import iotaAward from './iota-award.json' with { type: 'json' };
 import arlhs from './arlhs.json' with { type: 'json' };
 import ubaDx from './uba-dx.json' with { type: 'json' };
 import iota from './iota.json' with { type: 'json' };
+import yota from './yota.json' with { type: 'json' };
 import cqww from './cqww.json' with { type: 'json' };
 import cqwpx from './cqwpx.json' with { type: 'json' };
 import cqwwRtty from './cqww-rtty.json' with { type: 'json' };
@@ -23,7 +24,7 @@ const BUILTIN = [
   // Activatie / awards
   pota, wwff, sota, gma, iotaAward, arlhs,
   // Contesten
-  ubaDx, iota, cqww, cqwpx, cqwwRtty, iaruHf, wae, wwDigi, arrlDx, arrlFd, iaruR1Vhf,
+  ubaDx, iota, yota, cqww, cqwpx, cqwwRtty, iaruHf, wae, wwDigi, arrlDx, arrlFd, iaruR1Vhf,
   // Flavor
   lotw
 ];

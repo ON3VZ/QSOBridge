@@ -34,7 +34,8 @@
   ],
   "header": {
     "required": [
-      "stationCall"
+      "stationCall",
+      "location"
     ],
     "optional": [
       "club"

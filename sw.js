@@ -17,7 +17,7 @@ const SHELL = [
   './js/normalize/bandplan.js', './js/normalize/modes.js', './js/normalize/datetime.js',
   './js/normalize/qrb.js', './js/normalize/validators.js',
   './js/i18n/index.js', './js/i18n/nl.json', './js/i18n/en.json', './js/i18n/fr.json',
-  './profiles/index.js','./profiles/pota.json','./profiles/wwff.json','./profiles/sota.json','./profiles/gma.json','./profiles/iota-award.json','./profiles/arlhs.json','./profiles/uba-dx.json','./profiles/iota.json','./profiles/cqww.json','./profiles/cqwpx.json','./profiles/cqww-rtty.json','./profiles/iaru-hf.json','./profiles/wae.json','./profiles/ww-digi.json','./profiles/arrl-dx.json','./profiles/arrl-fd.json','./profiles/iaru-r1-vhf.json','./profiles/lotw.json'
+  './profiles/index.js','./profiles/pota.json','./profiles/wwff.json','./profiles/sota.json','./profiles/gma.json','./profiles/iota-award.json','./profiles/arlhs.json','./profiles/uba-dx.json','./profiles/iota.json', './profiles/yota.json','./profiles/cqww.json','./profiles/cqwpx.json','./profiles/cqww-rtty.json','./profiles/iaru-hf.json','./profiles/wae.json','./profiles/ww-digi.json','./profiles/arrl-dx.json','./profiles/arrl-fd.json','./profiles/iaru-r1-vhf.json','./profiles/lotw.json'
 ];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

@@ -61,6 +61,7 @@ export function makeQso(init = {}) {
     state: init.state ?? null,
     province: init.province ?? null,
     section: init.section ?? null,
+    age: init.age ?? null,
     iota: init.iota ?? null,
     refs: init.refs ?? {},
     qrbKm: init.qrbKm ?? null,

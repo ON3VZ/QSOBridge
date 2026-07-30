@@ -30,7 +30,8 @@
   "header": {
     "required": [
       "stationCall",
-      "myGrid"
+      "myGrid",
+      "location"
     ],
     "optional": []
   },
