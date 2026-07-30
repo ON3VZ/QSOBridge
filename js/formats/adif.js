@@ -127,8 +127,17 @@ function fieldsToQso(f, warnings, recNo) {
   if (f.ITUZ) q.ituZone = parseInt(f.ITUZ, 10);
   if (f.STX) q.serialSent = parseInt(f.STX, 10);
   if (f.SRX) q.serialRcvd = parseInt(f.SRX, 10);
-  if (f.STX_STRING) q.exchangeSent.string = f.STX_STRING;
-  if (f.SRX_STRING) q.exchangeRcvd.string = f.SRX_STRING;
+  if (f.STX_STRING) {
+    q.exchangeSent.string = f.STX_STRING;
+    const ex = parseExchangeString(f.STX_STRING);
+    if (q.serialSent == null && ex.serial != null) q.serialSent = ex.serial;
+  }
+  if (f.SRX_STRING) {
+    q.exchangeRcvd.string = f.SRX_STRING;
+    const ex = parseExchangeString(f.SRX_STRING);
+    if (q.serialRcvd == null && ex.serial != null) q.serialRcvd = ex.serial;
+    if (!q.iota && ex.iota) q.iota = ex.iota;
+  }
 
   // Frequentie / band met wederzijdse inferentie.
   if (f.FREQ) { const mhz = parseFloat(f.FREQ); if (!Number.isNaN(mhz)) q.freqMHz = mhz; }
@@ -278,4 +287,13 @@ function fileName(s, profile, rows) {
   }
   const call = (s.stationCall || 'log').replace(/\//g, '-');
   return `${call}.adi`;
+}
+
+/** Splitst een samengestelde exchange-string (bv. "384 EU-130") in volgnummer + IOTA-ref. */
+export function parseExchangeString(str) {
+  const s = String(str || '');
+  const iota = (s.match(/\b([A-Z]{2}-\d{3})\b/i) || [])[1] || null;
+  const rest = iota ? s.replace(iota, ' ') : s;
+  const serial = (rest.match(/\b(\d{1,5})\b/) || [])[1] || null;
+  return { serial: serial != null ? parseInt(serial, 10) : null, iota: iota ? iota.toUpperCase() : null };
 }
