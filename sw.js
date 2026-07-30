@@ -1,5 +1,5 @@
 // sw.js — Service worker (Fase 6): app-shell cache voor offline gebruik.
-const CACHE = 'qsobridge-v1';
+const CACHE = 'qsobridge-2026-07-30a';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './icon.svg',
   './css/qsobridge.css',
